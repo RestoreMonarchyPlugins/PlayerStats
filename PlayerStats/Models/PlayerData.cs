@@ -19,6 +19,7 @@ namespace RestoreMonarchy.PlayerStats.Models
         public int Structures { get; set; }
         public int Barricades { get; set; }
         public ulong Playtime  { get; set; }
+        public bool UIDisabled { get; set; }
         public DateTime LastUpdated { get; set; }
     }
 }

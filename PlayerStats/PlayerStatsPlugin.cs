@@ -92,6 +92,14 @@ namespace RestoreMonarchy.PlayerStats
             { "RankingListItemPVP", "[[b]]#{0}[[/b]] [[b]]{1}[[/b]] - {2} kills" },
             { "RankingListHeaderPVE", "[[b]]Top {0} Players by Zombie Kills[[/b]]" },
             { "RankingListItemPVE", "[[b]]#{0}[[/b]] [[b]]{1}[[/b]] - {2} zombie kills" },
+            { "YouAreUnrankedPVP", "You are unranked because you have [[b]]{0}/{1}[[/b]] kills. " },
+            { "OtherPlayerIsUnrankedPVP", "[[b]]{0}[[/b]] is unranked because they have [[b]]{1}/{2}[[/b]] kills." },
+            { "YouAreUnrankedPVE", "You are unranked because you have [[b]]{0}/{1}[[/b]] zombie kills. " },
+            { "OtherPlayerIsUnrankedPVE", "[[b]]{0}[[/b]] is unranked because they have [[b]]{1}/{2}[[/b]] zombie kills." },
+            { "NoRankingPlayersFound", "There isn't any players qualified for ranking yet." },
+            { "StatsUIDisabled", "Stats UI has been disabled" },
+            { "StatsUIEnabled", "Stats UI has been enabled" },
+
             { "Day", "1 day" },
             { "Days", "{0} days" },
             { "Hour", "1 hour" },
@@ -102,12 +110,15 @@ namespace RestoreMonarchy.PlayerStats
             { "Seconds", "{0} seconds" },
             { "Zero", "a moment" },
 
+            { "UI_NextReward", "Next Reward: {0}" },
+            { "UI_RewardProgress", "{0}/{1} Kills" },
             { "UI_Kills", "KILLS" },
             { "UI_Deaths", "DEATHS" },
             { "UI_Headshots", "HS" },
             { "UI_Accuracy", "HS%" },
             { "UI_Rank", "RANK" },
             { "UI_KDR", "K/D" },
+            { "UI_Footer", "Use /statsui to hide" },
 
         };
 

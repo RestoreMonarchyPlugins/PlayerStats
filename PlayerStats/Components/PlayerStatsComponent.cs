@@ -1,7 +1,11 @@
 ﻿using RestoreMonarchy.PlayerStats.Helpers;
 using RestoreMonarchy.PlayerStats.Models;
+using Rocket.API.Serialisation;
+using Rocket.Core;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RestoreMonarchy.PlayerStats.Components
@@ -12,23 +16,31 @@ namespace RestoreMonarchy.PlayerStats.Components
         private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
 
         public Player Player { get; private set; }
+        private string Name => Player.channel.owner.playerID.characterName;
+        private ulong SteamId => Player.channel.owner.playerID.steamID.m_SteamID;
         public PlayerData PlayerData { get; private set; }
+
+        private Reward GetCurrentReward() => configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
+        private Reward GetNextReward() => configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Kills);
 
         void Awake()
         {
             Player = gameObject.GetComponent<Player>();
-            ulong steamId = Player.channel.owner.playerID.steamID.m_SteamID;
-            string name = Player.channel.owner.playerID.characterName;
             ThreadHelper.RunAsynchronously(() =>
             {   
-                PlayerData playerData = pluginInstance.Database.GetOrAddPlayer(steamId, name);
+                PlayerData playerData = pluginInstance.Database.GetOrAddPlayer(SteamId, Name);
                 ThreadHelper.RunSynchronously(() =>
                 {
-                    if (Player != null)
+                    if (Player != null && this != null)
                     {
-                        playerData.Name = Player.channel.owner.playerID.characterName;
+                        playerData.Name = Name;
                         PlayerData = playerData;
-                    }                    
+
+                        if (configuration.EnableUIEffect && !playerData.UIDisabled)
+                        {
+                            SendUIEffect();
+                        }
+                    }
                 });
             });
         }
@@ -36,12 +48,15 @@ namespace RestoreMonarchy.PlayerStats.Components
         void Start()
         {
             InvokeRepeating(nameof(UpdatePlaytime), 1, 1);
-            InvokeRepeating(nameof(UpdateUIRanking), 60, 60);
+            InvokeRepeating(nameof(UpdateUIRanking), 90, 90);
         }
 
         void OnDestroy()
         {
             CancelInvoke(nameof(UpdatePlaytime));
+            CancelInvoke(nameof(UpdateUIRanking));
+
+            CloseUIEffect();
         }
 
         ulong prePlaytime = 0;
@@ -64,12 +79,24 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         private void UpdateUIRanking()
         {
+            if (!isOpen)
+            {
+                return;
+            }
 
+            ThreadHelper.RunAsynchronously(() =>
+            {
+                PlayerRanking playerRanking = pluginInstance.Database.GetPlayerRanking(SteamId);
+                ThreadHelper.RunSynchronously(() =>
+                {
+                    UpdateUIEffectRank(playerRanking);
+                });
+            });
         }
 
         internal void OnPlayerDeath(Player killer, ELimb limb, EDeathCause cause)
         {
-            if (killer != null)
+            if (killer != null && killer != Player)
             {
                 PlayerData.PVPDeaths++;
 
@@ -81,10 +108,32 @@ namespace RestoreMonarchy.PlayerStats.Components
                     {
                         killerComponent.PlayerData.Headshots++;
                     }
+                    killerComponent.UpdateUIEffect();
+                    killerComponent.CheckGiveReward();
                 }
+                UpdateUIEffect();
             } else
             {
-                PlayerData.PVEDeaths++;  
+                PlayerData.PVEDeaths++;
+            }
+        }
+
+        internal void CheckGiveReward()
+        {
+            if (!configuration.EnableRewards)
+            {
+                return;
+            }
+
+            Reward reward = GetCurrentReward();
+            if (reward != null)
+            {
+                UnturnedPlayer unturnedPlayer = UnturnedPlayer.FromPlayer(Player);
+                List<RocketPermissionsGroup> groups = R.Permissions.GetGroups(unturnedPlayer, false);
+                if (!groups.Exists(x => x.Id.Equals(reward.PermissionGroup, System.StringComparison.OrdinalIgnoreCase)))
+                {
+                    R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
+                }                
             }
         }
 
@@ -96,9 +145,11 @@ namespace RestoreMonarchy.PlayerStats.Components
                     PlayerData.Animals++;
                     break;
                 case EPlayerStat.KILLS_ZOMBIES_NORMAL:
+                    CheckGiveReward();
                     PlayerData.Zombies++;
                     break;
                 case EPlayerStat.KILLS_ZOMBIES_MEGA:
+                    CheckGiveReward();
                     PlayerData.MegaZombies++;
                     break;
                 case EPlayerStat.FOUND_RESOURCES:

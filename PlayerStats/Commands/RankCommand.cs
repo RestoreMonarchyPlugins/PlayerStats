@@ -60,16 +60,38 @@ namespace RestoreMonarchy.PlayerStats.Commands
                         return;
                     }
 
+                    if (unturnedPlayer != null && unturnedPlayer.Player != null)
+                    {
+                        PlayerStatsComponent component = unturnedPlayer.Player.GetComponent<PlayerStatsComponent>();
+                        if (component != null)
+                        {
+                            component.UpdateUIEffectRank(playerRanking);
+                        }
+                    }
+
                     string rank = playerRanking.Rank.ToString();
+                    int minTreshold = pluginInstance.Configuration.Instance.MinimumRankingTreshold;
                     if (pluginInstance.Configuration.Instance.PVPRanking)
-                    {                        
-                        string kills = playerRanking.Kills.ToString("N0");
+                    {
+                        string kills = playerRanking.Kills.ToString("N0");                      
                         if (caller.Id == playerRanking.SteamId.ToString())
                         {
-                            pluginInstance.SendMessageToPlayer(caller, "YourPlayerPVPRanking", rank, kills);
+                            if (playerRanking.IsUnranked())
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "YouAreUnrankedPVP", kills, minTreshold);
+                            } else
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "YourPlayerPVPRanking", rank, kills);
+                            }                            
                         } else
                         {
-                            pluginInstance.SendMessageToPlayer(caller, "OtherPlayerPVPRanking", playerRanking.Name, rank, kills);
+                            if (playerRanking.IsUnranked())
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "OtherPlayerIsUnrankedPVP", playerRanking.Name, kills, minTreshold);
+                            } else
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "OtherPlayerPVPRanking", playerRanking.Name, rank, kills);
+                            }
                         }                        
                     }
                     else
@@ -77,10 +99,22 @@ namespace RestoreMonarchy.PlayerStats.Commands
                         string zombies = playerRanking.Zombies.ToString("N0");
                         if (caller.Id == playerRanking.SteamId.ToString())
                         {
-                            pluginInstance.SendMessageToPlayer(caller, "YourPlayerPVERanking", rank, zombies);
+                            if (playerRanking.IsUnranked())
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "YouAreUnrankedPVE", zombies, minTreshold);
+                            } else
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "YourPlayerPVERanking", rank, zombies);
+                            }                            
                         } else
                         {
-                            pluginInstance.SendMessageToPlayer(caller, "OtherPlayerPVERanking", playerRanking.Name, rank, zombies);
+                            if (playerRanking.IsUnranked())
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "OtherPlayerIsUnrankedPVE", playerRanking.Name, zombies, minTreshold);
+                            } else
+                            {
+                                pluginInstance.SendMessageToPlayer(caller, "OtherPlayerPVERanking", playerRanking.Name, rank, zombies);
+                            }
                         }
                     }
                 });

@@ -1,9 +1,5 @@
-﻿using RestoreMonarchy.PlayerStats.Components;
-using RestoreMonarchy.PlayerStats.Helpers;
-using RestoreMonarchy.PlayerStats.Models;
+﻿using RestoreMonarchy.PlayerStats.Helpers;
 using Rocket.API;
-using Rocket.Unturned.Player;
-using SDG.Unturned;
 using System.Collections.Generic;
 
 namespace RestoreMonarchy.PlayerStats.Commands
@@ -27,7 +23,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                     string kills = playerData.Kills.ToString("N0");
                     string deaths = playerData.PVPDeaths.ToString("N0");
                     string kdr = deaths == "0" ? kills : (playerData.Kills / playerData.PVPDeaths).ToString("N2");
-                    string hsPercentage = playerData.Kills == 0 ? "0" : ((playerData.Headshots / playerData.Kills) * 100).ToString("N0");
+                    string hsPercentage = (playerData.Kills == 0 ? "0" : (((decimal)playerData.Headshots / playerData.Kills) * 100).ToString("N0")) + "%";
 
                     if (caller.Id == playerData.SteamId.ToString())
                     {

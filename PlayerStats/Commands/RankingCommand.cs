@@ -20,13 +20,13 @@ namespace RestoreMonarchy.PlayerStats.Commands
 
             ThreadHelper.RunAsynchronously(() =>
             {
-                List<PlayerRanking> playerRankings = pluginInstance.Database.GetPlayerRankings(amount).ToList();
+                List<PlayerRanking> playerRankings = pluginInstance.Database.GetPlayerRankings(amount).Where(x => !x.IsUnranked()).ToList();
                 amount = playerRankings.Count;
                 ThreadHelper.RunSynchronously(() =>
                 {
                     if (playerRankings.Count == 0)
                     {
-                        pluginInstance.SendMessageToPlayer(caller, "NoPlayersFound");
+                        pluginInstance.SendMessageToPlayer(caller, "NoRankingPlayersFound");
                         return;
                     }
 

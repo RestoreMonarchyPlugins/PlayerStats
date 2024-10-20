@@ -18,6 +18,7 @@ namespace RestoreMonarchy.PlayerStats
         public bool PVPRanking { get; set; }
         public bool PVPRewards { get; set; }
         public int MinimumRankingTreshold { get; set; }
+        public bool EnableRewards { get; set; }
         public Reward[] Rewards { get; set; }
 
         public void LoadDefaults()
@@ -35,13 +36,20 @@ namespace RestoreMonarchy.PlayerStats
             PVPRanking = true;
             PVPRewards = true;
             MinimumRankingTreshold = 25;
+            EnableRewards = true;
             Rewards =
             [
                 new Reward
                 {
-                    Name = "Airdrop",
-                    Command = "/airdrop",
-                    Treshold = 5
+                    Name = "VIP Rank",
+                    PermissionGroup = "vip",
+                    Treshold = 50
+                },
+                new Reward
+                {
+                    Name = "MVP Rank",
+                    PermissionGroup = "mvp",
+                    Treshold = 125
                 }
             ];
         }
