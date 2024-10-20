@@ -14,6 +14,33 @@ namespace RestoreMonarchy.PlayerStats.Databases
 
         private List<PlayerData> playersData = new();
 
+        public IEnumerable<PlayerRanking> GetPlayerRankings(int amount)
+        {
+            List<PlayerRanking> rankings = new();
+            if (configuration.PVPRanking)
+            {
+                rankings = playersData.OrderByDescending(x => x.Kills).Take(amount).Select((x, i) => new PlayerRanking
+                {
+                    SteamId = x.SteamId,
+                    Name = x.Name,
+                    Kills = x.Kills,
+                    Rank = i + 1
+                }).ToList();
+            }
+            else
+            {
+                rankings = playersData.OrderByDescending(x => x.Zombies).Take(amount).Select((x, i) => new PlayerRanking
+                {
+                    SteamId = x.SteamId,
+                    Name = x.Name,
+                    Zombies = x.Zombies,
+                    Rank = i + 1
+                }).ToList();
+            }
+
+            return rankings;
+        }
+
         public PlayerRanking GetPlayerRanking(ulong steamId)
         {
             PlayerData player = GetPlayer(steamId);

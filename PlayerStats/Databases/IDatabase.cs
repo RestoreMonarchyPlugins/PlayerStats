@@ -12,5 +12,6 @@ namespace RestoreMonarchy.PlayerStats.Databases
         void AddOrUpdatePlayer(PlayerData player);
         PlayerData GetOrAddPlayer(ulong steamId, string name);
         PlayerRanking GetPlayerRanking(ulong steamId);
+        IEnumerable<PlayerRanking> GetPlayerRankings(int amount);
     }
 }

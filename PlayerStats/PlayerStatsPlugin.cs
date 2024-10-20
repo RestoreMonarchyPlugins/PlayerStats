@@ -88,6 +88,10 @@ namespace RestoreMonarchy.PlayerStats
             { "OtherPlayerPVPRanking", "[[b]]{0}[[/b]] rank is [[b]]#{1}[[/b]] with {2} kills." },
             { "YourPlayerPVERanking", "Your rank is [[b]]#{0}[[/b]] with {1} zombie kills." },
             { "OtherPlayerPVERanking", "[[b]]{0}[[/b]] rank is [[b]]#{1}[[/b]] with {2} zombie kills." },
+            { "RankingListHeaderPVP", "[[b]]Top {0} Players by Kills[[/b]]" },
+            { "RankingListItemPVP", "[[b]]#{0}[[/b]] [[b]]{1}[[/b]] - {2} kills" },
+            { "RankingListHeaderPVE", "[[b]]Top {0} Players by Zombie Kills[[/b]]" },
+            { "RankingListItemPVE", "[[b]]#{0}[[/b]] [[b]]{1}[[/b]] - {2} zombie kills" },
             { "Day", "1 day" },
             { "Days", "{0} days" },
             { "Hour", "1 hour" },
@@ -238,6 +242,7 @@ namespace RestoreMonarchy.PlayerStats
             msg = msg.Replace("[[", "<").Replace("]]", ">");
             if (player is ConsolePlayer)
             {
+                msg = msg.Replace("<b>", "").Replace("</b>", "");
                 Logger.Log(msg);
                 return;
             }
