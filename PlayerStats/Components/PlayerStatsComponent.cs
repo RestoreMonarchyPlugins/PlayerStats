@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace RestoreMonarchy.PlayerStats.Components
 {
-    public class PlayerStatsComponent : MonoBehaviour
+    public partial class PlayerStatsComponent : MonoBehaviour
     {
         private PlayerStatsPlugin pluginInstance => PlayerStatsPlugin.Instance;
         private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
@@ -36,6 +36,7 @@ namespace RestoreMonarchy.PlayerStats.Components
         void Start()
         {
             InvokeRepeating(nameof(UpdatePlaytime), 1, 1);
+            InvokeRepeating(nameof(UpdateUIRanking), 60, 60);
         }
 
         void OnDestroy()
@@ -59,6 +60,11 @@ namespace RestoreMonarchy.PlayerStats.Components
             }
 
             PlayerData.Playtime++;
+        }
+
+        private void UpdateUIRanking()
+        {
+
         }
 
         internal void OnPlayerDeath(Player killer, ELimb limb, EDeathCause cause)

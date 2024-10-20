@@ -100,7 +100,15 @@ namespace RestoreMonarchy.PlayerStats
             { "Minutes", "{0} minutes" },
             { "Second", "1 second" },
             { "Seconds", "{0} seconds" },
-            { "Zero", "a moment" }
+            { "Zero", "a moment" },
+
+            { "UI_Kills", "KILLS" },
+            { "UI_Deaths", "DEATHS" },
+            { "UI_Headshots", "HS" },
+            { "UI_Accuracy", "HS%" },
+            { "UI_Rank", "RANK" },
+            { "UI_KDR", "K/D" },
+
         };
 
         internal string FormatTimespan(TimeSpan span)
