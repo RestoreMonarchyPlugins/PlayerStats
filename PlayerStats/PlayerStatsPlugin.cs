@@ -2,10 +2,12 @@
 using RestoreMonarchy.PlayerStats.Databases;
 using RestoreMonarchy.PlayerStats.Helpers;
 using RestoreMonarchy.PlayerStats.Models;
+using Rocket.API;
 using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
+using Rocket.Unturned.Chat;
 using Rocket.Unturned.Events;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
@@ -19,15 +21,18 @@ namespace RestoreMonarchy.PlayerStats
     public class PlayerStatsPlugin : RocketPlugin<PlayerStatsConfiguration>
     {
         public static PlayerStatsPlugin Instance { get; private set; }
+        public UnityEngine.Color MessageColor { get; set; }
         public IDatabase Database { get; private set; }
 
         protected override void Load()
         {
             Instance = this;
+            MessageColor = UnturnedChat.GetColorFromName(Configuration.Instance.MessageColor, UnityEngine.Color.green);
 
             Database = new JsonDatabase();
             Database.Initialize();
 
+            U.Events.OnPlayerConnected += OnPlayerConnected;
             U.Events.OnPlayerDisconnected += OnPlayerDisconnected;
             PlayerLife.onPlayerDied += OnPlayerDied;
             UnturnedPlayerEvents.OnPlayerUpdateStat += OnPlayerUpdatedStat;
@@ -36,11 +41,7 @@ namespace RestoreMonarchy.PlayerStats
 
             foreach (Player player in PlayerTool.EnumeratePlayers())
             {
-                PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
-                if (component == null)
-                {
-                    player.gameObject.AddComponent<PlayerStatsComponent>();
-                }
+                player.gameObject.AddComponent<PlayerStatsComponent>(); 
             }
 
             InvokeRepeating(nameof(Save), Configuration.Instance.SaveIntervalSeconds, Configuration.Instance.SaveIntervalSeconds);
@@ -51,6 +52,7 @@ namespace RestoreMonarchy.PlayerStats
 
         protected override void Unload()
         {
+            U.Events.OnPlayerConnected -= OnPlayerConnected;
             U.Events.OnPlayerDisconnected -= OnPlayerDisconnected;
             PlayerLife.onPlayerDied -= OnPlayerDied;
             UnturnedPlayerEvents.OnPlayerUpdateStat -= OnPlayerUpdatedStat;
@@ -63,10 +65,7 @@ namespace RestoreMonarchy.PlayerStats
             foreach (Player player in PlayerTool.EnumeratePlayers())
             {
                 PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
-                if (component == null)
-                {
-                    Destroy(component);
-                }
+                Destroy(component);
             }
 
             Logger.Log($"{Name} has been unloaded!", ConsoleColor.Yellow);
@@ -74,8 +73,48 @@ namespace RestoreMonarchy.PlayerStats
 
         public override TranslationList DefaultTranslations => new()
         {
-            { "", "" }
+            { "StatsCommandSyntax", "You must specify player name or steamID." },
+            { "PlayerStatsNotLoaded", "Player stats are not loaded for [[b]]{0}.[[/b]] Please try again later." },
+            { "PlayerNotFound", "Player [[b]]{0}[[/b]] not found." },
+            { "YourPVPStats", "[[b]]Your[[/b]] PVP stats | Kills: [[b]]{0}[[/b]], Deaths: [[b]]{1}[[/b]], KDR: [[b]]{2}[[/b]], HS: [[b]]{3}%[[/b]]" },
+            { "YourPVEStats", "[[b]]Your[[/b]] PVE stats | Zombies: [[b]]{0}[[/b]], Mega Zombies: [[b]]{1}[[/b]], Animals: [[b]]{2}[[/b]], Resources: [[b]]{3}[[/b]], Harvests: [[b]]{4}[[/b]], Fish: [[b]]{5}[[/b]]" },
+            { "OtherPVPStats", "[[b]]{0}[[/b]] PVP stats | Kills: [[b]]{1}[[/b]], Deaths: [[b]]{2}[[/b]], KDR: [[b]]{3}[[/b]], HS: [[b]]{4}%[[/b]]" },
+            { "OtherPVEStats", "[[b]]{0}[[/b]] PVE stats | Zombies: [[b]]{1}[[/b]], Mega Zombies: [[b]]{2}[[/b]], Animals: [[b]]{3}[[/b]], Resources: [[b]]{4}[[/b]], Harvests: [[b]]{5}[[/b]], Fish: [[b]]{6}[[/b]]" },
+            { "PlaytimeCommandSyntax", "You must specify player name or steamID." },
+            { "YourPlaytime", "You have played for [[b]]{0}[[/b]]" },
+            { "OtherPlaytime", "[[b]]{0}[[/b]] has played for [[b]]{1}[[/b]]" },
+            { "RankCommandSyntax", "You must specify player name or steamID." },
+            { "YourPlayerPVPRanking", "Your rank is [[b]]#{0}[[/b]] with {1} kills" },
+            { "OtherPlayerPVPRanking", "[[b]]{0}[[/b]] rank is [[b]]#{1}[[/b]] with {2} kills." },
+            { "YourPlayerPVERanking", "Your rank is [[b]]#{0}[[/b]] with {1} zombie kills." },
+            { "OtherPlayerPVERanking", "[[b]]{0}[[/b]] rank is [[b]]#{1}[[/b]] with {2} zombie kills." },
+            { "Day", "1 day" },
+            { "Days", "{0} days" },
+            { "Hour", "1 hour" },
+            { "Hours", "{0} hours" },
+            { "Minute", "1 minute" },
+            { "Minutes", "{0} minutes" },
+            { "Second", "1 second" },
+            { "Seconds", "{0} seconds" },
+            { "Zero", "a moment" }
         };
+
+        internal string FormatTimespan(TimeSpan span)
+        {
+            if (span <= TimeSpan.Zero) return Translate("Zero");
+
+            List<string> items = new();
+            if (span.Days > 0)
+                items.Add(span.Days == 1 ? Translate("Day") : Translate("Days", span.Days));
+            if (span.Hours > 0)
+                items.Add(span.Hours == 1 ? Translate("Hour") : Translate("Hours", span.Hours));
+            if (items.Count < 2 && span.Minutes > 0)
+                items.Add(span.Minutes == 1 ? Translate("Minute") : Translate("Minutes", span.Minutes));
+            if (items.Count < 2 && span.Seconds > 0)
+                items.Add(span.Seconds == 1 ? Translate("Second") : Translate("Seconds", span.Seconds));
+
+            return string.Join(" ", items);
+        }
 
         private void Save(bool async = true)
         {
@@ -96,6 +135,15 @@ namespace RestoreMonarchy.PlayerStats
             {
                 Database.Save(playersData);
             }            
+        }
+
+        private void OnPlayerConnected(UnturnedPlayer player)
+        {
+            PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
+            if (component == null)
+            {
+                player.Player.gameObject.AddComponent<PlayerStatsComponent>();
+            }
         }
 
         private void OnPlayerDisconnected(UnturnedPlayer player)
@@ -182,6 +230,20 @@ namespace RestoreMonarchy.PlayerStats
             {
                 component.OnStructureSpawned();
             }
+        }
+
+        internal void SendMessageToPlayer(IRocketPlayer player, string translationKey, params object[] placeholder)
+        {
+            string msg = Translate(translationKey, placeholder);
+            msg = msg.Replace("[[", "<").Replace("]]", ">");
+            if (player is ConsolePlayer)
+            {
+                Logger.Log(msg);
+                return;
+            }
+
+            UnturnedPlayer unturnedPlayer = (UnturnedPlayer)player;
+            ChatManager.serverSendMessage(msg, MessageColor, null, unturnedPlayer.SteamPlayer(), EChatMode.SAY, Configuration.Instance.MessageIconUrl, true);
         }
     }
 }

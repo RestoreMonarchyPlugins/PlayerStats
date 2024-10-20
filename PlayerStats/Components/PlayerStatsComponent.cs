@@ -21,7 +21,7 @@ namespace RestoreMonarchy.PlayerStats.Components
             string name = Player.channel.owner.playerID.characterName;
             ThreadHelper.RunAsynchronously(() =>
             {   
-                PlayerData playerData = pluginInstance.Database.GetPlayer(steamId, name);
+                PlayerData playerData = pluginInstance.Database.GetOrAddPlayer(steamId, name);
                 ThreadHelper.RunSynchronously(() =>
                 {
                     if (Player != null)

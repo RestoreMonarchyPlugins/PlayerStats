@@ -7,7 +7,7 @@ namespace RestoreMonarchy.PlayerStats.Models
         [XmlAttribute]
         public string Name { get; set; }
         [XmlAttribute]
-        public int Kills { get; set; }
+        public int Treshold { get; set; }
         [XmlAttribute]
         public string Command { get; set; }
         public bool ShouldSerializeCommand() => !string.IsNullOrEmpty(Command);

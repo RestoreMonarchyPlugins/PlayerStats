@@ -1,12 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RestoreMonarchy.PlayerStats.Models;
-using Rocket.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestoreMonarchy.PlayerStats.Databases
 {
@@ -17,16 +14,27 @@ namespace RestoreMonarchy.PlayerStats.Databases
 
         private List<PlayerData> playersData = new();
 
-        public PlayerRanking GetPlayerRankingByKills(ulong steamId)
+        public PlayerRanking GetPlayerRanking(ulong steamId)
         {
             PlayerData player = GetPlayer(steamId);
+            if (player == null)
+            {
+                return null;
+            }
 
             PlayerRanking ranking = new();
-            ranking.Rank = playersData.OrderByDescending(x => x.Kills).ToList().FindIndex(x => x.SteamId == steamId) + 1;
-            ranking.SteamId = steamId;
+            ranking.SteamId = player.SteamId;
+            ranking.Name = player.Name;
             ranking.Kills = player.Kills;
-            ranking.Deaths = player.PVPDeaths;
-            ranking.Headshots = player.Headshots;
+            ranking.Zombies = player.Zombies;
+            if (configuration.PVPRanking)
+            {
+                ranking.Rank = playersData.Count(x => x.Kills > player.Kills) + 1;
+                
+            } else
+            {
+                ranking.Rank = playersData.Count(x => x.Zombies > player.Zombies) + 1;
+            }
 
             return ranking;
         }
@@ -34,13 +42,9 @@ namespace RestoreMonarchy.PlayerStats.Databases
         public void AddOrUpdatePlayer(PlayerData player)
         {
             player.LastUpdated = DateTime.UtcNow;
-            if (!playersData.Contains(player))
-            {
-                playersData.Add(player);
-            }
         }
 
-        public PlayerData GetPlayer(ulong steamId, string name = null)
+        public PlayerData GetOrAddPlayer(ulong steamId, string name)
         {
             PlayerData player = playersData.FirstOrDefault(x => x.SteamId == steamId);
             if (player == null)
@@ -52,6 +56,13 @@ namespace RestoreMonarchy.PlayerStats.Databases
                 };
                 playersData.Add(player);
             }
+
+            return player;
+        }
+
+        public PlayerData GetPlayer(ulong steamId)
+        {
+            PlayerData player = playersData.FirstOrDefault(x => x.SteamId == steamId);
 
             return player;
         }
@@ -80,8 +91,13 @@ namespace RestoreMonarchy.PlayerStats.Databases
 
         public void Save(IEnumerable<PlayerData> playersData)
         {
+            foreach (PlayerData player in playersData)
+            {
+                player.LastUpdated = DateTime.UtcNow;
+            }
+
             string path = configuration.JsonFilePath.Replace("{rocket_directory}", Directory.GetCurrentDirectory());
-            string text = JsonConvert.SerializeObject(playersData, Formatting.Indented);
+            string text = JsonConvert.SerializeObject(this.playersData, Formatting.Indented);
             File.WriteAllText(path, text);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using RestoreMonarchy.PlayerStats.Models;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace RestoreMonarchy.PlayerStats.Databases
@@ -9,7 +8,9 @@ namespace RestoreMonarchy.PlayerStats.Databases
         void Initialize();
         void Reload();
         void Save(IEnumerable<PlayerData> playersData);
-        PlayerData GetPlayer(ulong steamId, string name = null);
+        PlayerData GetPlayer(ulong steamId);
         void AddOrUpdatePlayer(PlayerData player);
+        PlayerData GetOrAddPlayer(ulong steamId, string name);
+        PlayerRanking GetPlayerRanking(ulong steamId);
     }
 }
