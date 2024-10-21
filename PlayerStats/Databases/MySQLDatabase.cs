@@ -109,6 +109,13 @@ namespace RestoreMonarchy.PlayerStats.Databases
             using (MySqlConnection conn = connection)
             {
                 conn.Execute(FormatSql(tables));
+
+                const string migrationCheck = "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'PlayerStats' AND COLUMN_NAME = 'PlayerID';";
+                if (conn.ExecuteScalar<int>(migrationCheck) > 0)
+                {
+                    string migration = ResourceHelper.GetResourceFileContent("migration.txt");
+                    conn.Execute(FormatSql(migration));
+                }
             }
         }
 

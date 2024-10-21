@@ -8,10 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\migration.txt" />
     <None Remove="Scripts\tables.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\migration.txt" />
     <EmbeddedResource Include="Scripts\tables.txt" />
   </ItemGroup>
 

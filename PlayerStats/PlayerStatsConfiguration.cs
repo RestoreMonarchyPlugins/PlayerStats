@@ -14,6 +14,7 @@ namespace RestoreMonarchy.PlayerStats
         public float SaveIntervalSeconds { get; set; }
         public bool EnableUIEffect { get; set; }
         public ushort UIEffectId { get; set; }
+        public bool ShowUIEffectByDefault { get; set; }
         public bool EnablePVPStats { get; set; }
         public bool EnablePVEStats { get; set; }
         public bool PVPRanking { get; set; }
@@ -33,6 +34,7 @@ namespace RestoreMonarchy.PlayerStats
             SaveIntervalSeconds = 300;
             EnableUIEffect = true;
             UIEffectId = 22512;
+            ShowUIEffectByDefault = true;
             EnablePVPStats = true;
             EnablePVEStats = true;
             PVPRanking = true;

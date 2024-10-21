@@ -19,6 +19,7 @@ namespace RestoreMonarchy.PlayerStats.Components
         private string Name => Player.channel.owner.playerID.characterName;
         private ulong SteamId => Player.channel.owner.playerID.steamID.m_SteamID;
         public PlayerData PlayerData { get; private set; }
+        public PlayerData SessionPlayerData { get; private set; }
 
         private Reward GetCurrentReward() => configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
         private Reward GetNextReward() => configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Kills);
@@ -35,8 +36,14 @@ namespace RestoreMonarchy.PlayerStats.Components
                     {
                         playerData.Name = Name;
                         PlayerData = playerData;
+                        SessionPlayerData = new()
+                        {
+                            SteamId = SteamId,
+                            Name = Name
+                        };
 
-                        if (configuration.EnableUIEffect && !playerData.UIDisabled)
+                        bool enabled = !playerData.UIDisabled ?? configuration.ShowUIEffectByDefault;
+                        if (configuration.EnableUIEffect && enabled)
                         {
                             SendUIEffect();
                         }
@@ -71,10 +78,12 @@ namespace RestoreMonarchy.PlayerStats.Components
             if (prePlaytime > 0)
             {
                 PlayerData.Playtime += prePlaytime;
+                SessionPlayerData.Playtime += prePlaytime;
                 prePlaytime = 0;
             }
 
             PlayerData.Playtime++;
+            SessionPlayerData.Playtime++;
         }
 
         private void UpdateUIRanking()
@@ -99,14 +108,17 @@ namespace RestoreMonarchy.PlayerStats.Components
             if (killer != null && killer != Player)
             {
                 PlayerData.PVPDeaths++;
+                SessionPlayerData.PVPDeaths++;
 
                 PlayerStatsComponent killerComponent = killer.GetComponent<PlayerStatsComponent>();
                 if (killerComponent != null)
                 {
                     killerComponent.PlayerData.Kills++;
+                    killerComponent.SessionPlayerData.Kills++;
                     if (limb == ELimb.SKULL)
                     {
                         killerComponent.PlayerData.Headshots++;
+                        killerComponent.SessionPlayerData.Headshots++;
                     }
                     killerComponent.UpdateUIEffect();
                     killerComponent.CheckGiveReward();
@@ -115,6 +127,7 @@ namespace RestoreMonarchy.PlayerStats.Components
             } else
             {
                 PlayerData.PVEDeaths++;
+                SessionPlayerData.PVEDeaths++;
             }
         }
 
@@ -151,23 +164,29 @@ namespace RestoreMonarchy.PlayerStats.Components
             {
                 case EPlayerStat.KILLS_ANIMALS:
                     PlayerData.Animals++;
+                    SessionPlayerData.Animals++;
                     break;
                 case EPlayerStat.KILLS_ZOMBIES_NORMAL:
                     PlayerData.Zombies++;
+                    SessionPlayerData.Zombies++;
                     CheckGiveReward();
                     break;
                 case EPlayerStat.KILLS_ZOMBIES_MEGA:
                     PlayerData.MegaZombies++;
+                    SessionPlayerData.MegaZombies++;
                     CheckGiveReward();
                     break;
                 case EPlayerStat.FOUND_RESOURCES:
                     PlayerData.Resources++;
+                    SessionPlayerData.Resources++;
                     break;
                 case EPlayerStat.FOUND_FISHES:
                     PlayerData.Fish++;
+                    SessionPlayerData.Fish++;
                     break;
                 case EPlayerStat.FOUND_PLANTS:
                     PlayerData.Harvests++;
+                    SessionPlayerData.Harvests++;
                     break;
             }
         }
@@ -175,11 +194,13 @@ namespace RestoreMonarchy.PlayerStats.Components
         internal void OnStructureSpawned()
         {
             PlayerData.Structures++;
+            SessionPlayerData.Structures++;
         }
 
         internal void OnBarricadeSpawned()
         {
             PlayerData.Barricades++;
+            SessionPlayerData.Barricades++;
         }
     }
 }

@@ -13,32 +13,25 @@ namespace RestoreMonarchy.PlayerStats.Commands
         {
             UnturnedPlayer player = (UnturnedPlayer)caller;
             PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
-
             if (component == null)
             {
                 pluginInstance.SendMessageToPlayer(player, "PlayerStatsNotLoaded");
                 return;
             }
 
-            bool flag = component.PlayerData.UIDisabled;
-            component.PlayerData.UIDisabled = !component.PlayerData.UIDisabled;
-            if (flag)
-            {
-                component.SendUIEffect();
-            } else
+            bool currentUIState = component.PlayerData.UIDisabled ?? !pluginInstance.Configuration.Instance.ShowUIEffectByDefault;
+            component.PlayerData.UIDisabled = !currentUIState;
+
+            if (component.PlayerData.UIDisabled.Value)
             {
                 component.CloseUIEffect();
-            }
-
-            if (flag)
-            {
-                pluginInstance.SendMessageToPlayer(player, "StatsUIEnabled");
+                pluginInstance.SendMessageToPlayer(player, "StatsUIDisabled");
             }
             else
             {
-                pluginInstance.SendMessageToPlayer(player, "StatsUIDisabled");
+                component.SendUIEffect();
+                pluginInstance.SendMessageToPlayer(player, "StatsUIEnabled");
             }
-
         }
 
         public AllowedCaller AllowedCaller => AllowedCaller.Player;
