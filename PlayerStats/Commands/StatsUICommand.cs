@@ -32,11 +32,11 @@ namespace RestoreMonarchy.PlayerStats.Commands
 
             if (flag)
             {
-                pluginInstance.SendMessageToPlayer(player, "StatsUIDisabled");
+                pluginInstance.SendMessageToPlayer(player, "StatsUIEnabled");
             }
             else
             {
-                pluginInstance.SendMessageToPlayer(player, "StatsUIEnabled");
+                pluginInstance.SendMessageToPlayer(player, "StatsUIDisabled");
             }
 
         }

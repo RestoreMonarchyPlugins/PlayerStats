@@ -24,7 +24,7 @@ namespace RestoreMonarchy.PlayerStats.Helpers
                 return reader.ReadToEnd();
             }
 
-            throw new FileNotFoundException("Failed to find the reosurce in the project files", fileName);
+            throw new FileNotFoundException("Failed to find the resource file in the project files", fileName);
         }
     }
 }

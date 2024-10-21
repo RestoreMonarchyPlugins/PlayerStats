@@ -14,6 +14,7 @@ using SDG.Unturned;
 using Steamworks;
 using System;
 using System.Collections.Generic;
+using System.Configuration.Internal;
 using System.Linq;
 
 namespace RestoreMonarchy.PlayerStats
@@ -29,7 +30,15 @@ namespace RestoreMonarchy.PlayerStats
             Instance = this;
             MessageColor = UnturnedChat.GetColorFromName(Configuration.Instance.MessageColor, UnityEngine.Color.green);
 
-            Database = new JsonDatabase();
+            if (Configuration.Instance.DatabaseProvider.Equals("mysql", StringComparison.OrdinalIgnoreCase))
+            {
+                Database = new MySQLDatabase();
+                Logger.Log("Database provider is set to MySQL");
+            } else
+            {
+                Database = new JsonDatabase();
+                Logger.Log("Database provider is set to JSON");
+            }            
             Database.Initialize();
 
             U.Events.OnPlayerConnected += OnPlayerConnected;
@@ -99,6 +108,8 @@ namespace RestoreMonarchy.PlayerStats
             { "NoRankingPlayersFound", "There isn't any players qualified for ranking yet." },
             { "StatsUIDisabled", "Stats UI has been disabled" },
             { "StatsUIEnabled", "Stats UI has been enabled" },
+            { "RewardReceivedPVP", "You received [[b]]{0}[[/b]] reward for {1} kills." },
+            { "RewardReceivedPVE", "You received [[b]]{0}[[/b]] reward for {1} zombie kills." },
 
             { "Day", "1 day" },
             { "Days", "{0} days" },

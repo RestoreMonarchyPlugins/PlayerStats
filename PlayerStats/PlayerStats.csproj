@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\tables.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\tables.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Dapper" Version="2.0.78" />
+	  <PackageReference Include="MySql.Data" Version="8.0.30" />
 	  <PackageReference Include="RestoreMonarchy.RocketRedist" Version="3.*" ExcludeAssets="runtime" />
   </ItemGroup>
 

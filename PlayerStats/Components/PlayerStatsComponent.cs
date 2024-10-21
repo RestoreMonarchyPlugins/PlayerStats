@@ -133,6 +133,14 @@ namespace RestoreMonarchy.PlayerStats.Components
                 if (!groups.Exists(x => x.Id.Equals(reward.PermissionGroup, System.StringComparison.OrdinalIgnoreCase)))
                 {
                     R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
+                    string treshold = reward.Treshold.ToString("N0");
+                    if (configuration.PVPRewards)
+                    {
+                        pluginInstance.SendMessageToPlayer(unturnedPlayer, "RewardReceivedPVP", reward.Name, treshold);
+                    } else
+                    {
+                        pluginInstance.SendMessageToPlayer(unturnedPlayer, "RewardReceivedPVE", reward.Name, treshold);
+                    }
                 }                
             }
         }
@@ -145,12 +153,12 @@ namespace RestoreMonarchy.PlayerStats.Components
                     PlayerData.Animals++;
                     break;
                 case EPlayerStat.KILLS_ZOMBIES_NORMAL:
-                    CheckGiveReward();
                     PlayerData.Zombies++;
+                    CheckGiveReward();
                     break;
                 case EPlayerStat.KILLS_ZOMBIES_MEGA:
-                    CheckGiveReward();
                     PlayerData.MegaZombies++;
+                    CheckGiveReward();
                     break;
                 case EPlayerStat.FOUND_RESOURCES:
                     PlayerData.Resources++;

@@ -1,0 +1,160 @@
+﻿using Dapper;
+using MySql.Data.MySqlClient;
+using RestoreMonarchy.PlayerStats.Helpers;
+using RestoreMonarchy.PlayerStats.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace RestoreMonarchy.PlayerStats.Databases
+{
+    internal class MySQLDatabase : IDatabase
+    {
+        private PlayerStatsPlugin pluginInstance => PlayerStatsPlugin.Instance;
+        private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
+        private MySqlConnection connection => new(configuration.MySQLConnectionString);
+        private string FormatSql(string query) => query.Replace("PlayerStats", configuration.PlayerStatsTableName);
+
+        public IEnumerable<PlayerRanking> GetPlayerRankings(int amount)
+        {
+            string orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+            string query = FormatSql($@"
+                SELECT 
+                    SteamId, 
+                    Name, 
+                    Kills, 
+                    Zombies,
+                    (SELECT COUNT(*) + 1 FROM PlayerStats AS p2 WHERE p2.{orderBy} > p1.{orderBy}) AS `Rank`
+                FROM PlayerStats AS p1
+                ORDER BY {orderBy} DESC
+                LIMIT @amount");
+
+            using (MySqlConnection conn = connection)
+            {
+                return conn.Query<PlayerRanking>(query, new { amount });
+            }
+        }
+
+        public PlayerRanking GetPlayerRanking(ulong steamId)
+        {
+            string orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+            string query = FormatSql($@"
+                SELECT 
+                    p1.SteamId, 
+                    p1.Name, 
+                    p1.Kills, 
+                    p1.Zombies,
+                    (SELECT COUNT(*) + 1 FROM PlayerStats AS p2 WHERE p2.{orderBy} > p1.{orderBy}) AS `Rank`
+                FROM PlayerStats AS p1
+                WHERE p1.SteamId = @steamId");
+
+            using (MySqlConnection conn = connection)
+            {
+                return conn.QueryFirstOrDefault<PlayerRanking>(query, new { steamId });
+            }
+        }
+
+        public void AddOrUpdatePlayer(PlayerData player)
+        {
+            string query = FormatSql(@"
+                INSERT INTO PlayerStats (
+                    SteamId, Name, Kills, Headshots, PVPDeaths, PVEDeaths, Zombies, MegaZombies,
+                    Animals, Resources, Harvests, Fish, Structures, Barricades, Playtime, UIDisabled, LastUpdated
+                ) VALUES (
+                    @SteamId, @Name, @Kills, @Headshots, @PVPDeaths, @PVEDeaths, @Zombies, @MegaZombies,
+                    @Animals, @Resources, @Harvests, @Fish, @Structures, @Barricades, @Playtime, @UIDisabled, @LastUpdated
+                ) ON DUPLICATE KEY UPDATE
+                    Name = @Name, Kills = @Kills, Headshots = @Headshots, PVPDeaths = @PVPDeaths,
+                    PVEDeaths = @PVEDeaths, Zombies = @Zombies, MegaZombies = @MegaZombies,
+                    Animals = @Animals, Resources = @Resources, Harvests = @Harvests, Fish = @Fish,
+                    Structures = @Structures, Barricades = @Barricades, Playtime = @Playtime,
+                    UIDisabled = @UIDisabled, LastUpdated = @LastUpdated");
+
+            player.LastUpdated = DateTime.UtcNow;
+
+            using (MySqlConnection conn = connection)
+            {
+                conn.Execute(query, player);
+            }
+        }
+
+        public PlayerData GetOrAddPlayer(ulong steamId, string name)
+        {
+            PlayerData player = GetPlayer(steamId);
+            if (player == null)
+            {
+                player = new PlayerData
+                {
+                    SteamId = steamId,
+                    Name = name
+                };
+                AddOrUpdatePlayer(player);
+            }
+            return player;
+        }
+
+        public PlayerData GetPlayer(ulong steamId)
+        {
+            string query = FormatSql("SELECT * FROM PlayerStats WHERE SteamId = @steamId");
+
+            using (MySqlConnection conn = connection)
+            {
+                return conn.QueryFirstOrDefault<PlayerData>(query, new { steamId });
+            }
+        }
+
+        public void Initialize()
+        {
+            string tables = ResourceHelper.GetResourceFileContent("tables.txt");
+            using (MySqlConnection conn = connection)
+            {
+                conn.Execute(FormatSql(tables));
+            }
+        }
+
+        public void Reload()
+        {
+            // No need to implement for MySQL as data is stored in the database
+        }
+
+        public void Save(IEnumerable<PlayerData> playersData)
+        {
+            string query = FormatSql(@"
+                INSERT INTO PlayerStats (
+                    SteamId, Name, Kills, Headshots, PVPDeaths, PVEDeaths, Zombies, MegaZombies,
+                    Animals, Resources, Harvests, Fish, Structures, Barricades, Playtime, UIDisabled, LastUpdated
+                ) VALUES (
+                    @SteamId, @Name, @Kills, @Headshots, @PVPDeaths, @PVEDeaths, @Zombies, @MegaZombies,
+                    @Animals, @Resources, @Harvests, @Fish, @Structures, @Barricades, @Playtime, @UIDisabled, @LastUpdated
+                ) ON DUPLICATE KEY UPDATE
+                    Name = VALUES(Name),
+                    Kills = VALUES(Kills),
+                    Headshots = VALUES(Headshots),
+                    PVPDeaths = VALUES(PVPDeaths),
+                    PVEDeaths = VALUES(PVEDeaths),
+                    Zombies = VALUES(Zombies),
+                    MegaZombies = VALUES(MegaZombies),
+                    Animals = VALUES(Animals),
+                    Resources = VALUES(Resources),
+                    Harvests = VALUES(Harvests),
+                    Fish = VALUES(Fish),
+                    Structures = VALUES(Structures),
+                    Barricades = VALUES(Barricades),
+                    Playtime = VALUES(Playtime),
+                    UIDisabled = VALUES(UIDisabled),
+                    LastUpdated = VALUES(LastUpdated)");
+
+            DateTime now = DateTime.UtcNow;
+            IEnumerable<PlayerData> updatedPlayersData = playersData.Select(p =>
+            {
+                p.LastUpdated = now;
+                return p;
+            });
+
+            using (MySqlConnection conn = connection)
+            {
+                conn.Execute(query, updatedPlayersData);
+            }
+        }
+    }
+}
