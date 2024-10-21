@@ -6,6 +6,7 @@ using Rocket.API;
 using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
+using Rocket.Core.Steam;
 using Rocket.Unturned;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Events;
@@ -119,6 +120,11 @@ namespace RestoreMonarchy.PlayerStats
             { "YourSessionPlaytime", "You have played for [[b]]{0}[[/b]] since you joined." },
             { "OtherSessionPlaytime", "[[b]]{0}[[/b]] has played for [[b]]{1}[[/b]] since they joined." },
 
+            { "JoinMessage", "[[b]][#{0}] {1}[[/b]] joined the server." },
+            { "LeaveMessage", "[[b]][#{0}] {1}[[/b]] left the server." },
+            { "JoinMessageNoRank", "[[b]]{0}[[/b]] joined the server." },
+            { "LeaveMessageNoRank", "[[b]]{0}[[/b]] left the server." },
+
             { "Day", "1 day" },
             { "Days", "{0} days" },
             { "Hour", "1 hour" },
@@ -184,7 +190,26 @@ namespace RestoreMonarchy.PlayerStats
             PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
             if (component == null)
             {
-                player.Player.gameObject.AddComponent<PlayerStatsComponent>();
+                component = player.Player.gameObject.AddComponent<PlayerStatsComponent>();
+
+                if (Configuration.Instance.EnableJoinLeaveMessages)
+                {
+                    ThreadHelper.RunAsynchronously(() =>
+                    {
+                        PlayerRanking playerRanking = Database.GetPlayerRanking(component.SteamId);
+                        ThreadHelper.RunSynchronously(() =>
+                        {
+                            if (playerRanking.IsUnranked())
+                            {
+                                SendMessageToPlayer(player, "JoinMessageNoRank", player.CharacterName);
+                            }
+                            else
+                            {
+                                SendMessageToPlayer(player, "JoinMessage", playerRanking.Rank.ToString("N0"), player.CharacterName);
+                            }
+                        });
+                    });
+                }
             }
         }
 
@@ -197,6 +222,25 @@ namespace RestoreMonarchy.PlayerStats
                 {
                     Database.AddOrUpdatePlayer(component.PlayerData);
                 });
+
+                if (Configuration.Instance.EnableJoinLeaveMessages)
+                {
+                    ThreadHelper.RunAsynchronously(() =>
+                    {
+                        PlayerRanking playerRanking = Database.GetPlayerRanking(component.SteamId);
+                        ThreadHelper.RunSynchronously(() =>
+                        {
+                            if (playerRanking.IsUnranked())
+                            {
+                                SendMessageToPlayer(player, "LeaveMessageNoRank", player.CharacterName);
+                            }
+                            else
+                            {
+                                SendMessageToPlayer(player, "LeaveMessage", playerRanking.Rank, player.CharacterName);
+                            }
+                        });
+                    });
+                }
             }
         }
 

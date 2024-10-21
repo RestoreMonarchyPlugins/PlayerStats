@@ -16,8 +16,8 @@ namespace RestoreMonarchy.PlayerStats.Components
         private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
 
         public Player Player { get; private set; }
-        private string Name => Player.channel.owner.playerID.characterName;
-        private ulong SteamId => Player.channel.owner.playerID.steamID.m_SteamID;
+        public string Name => Player.channel.owner.playerID.characterName;
+        public ulong SteamId => Player.channel.owner.playerID.steamID.m_SteamID;
         public PlayerData PlayerData { get; private set; }
         public PlayerData SessionPlayerData { get; private set; }
 

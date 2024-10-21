@@ -41,13 +41,18 @@ namespace RestoreMonarchy.PlayerStats.Components
                 EffectManager.sendUIEffectVisibility(Key, TransportConnection, true, "PlayerStats_ProgressBar", false);
             }
 
-            UpdateUIRanking();
             UpdateUIEffect();
+            UpdateUIRanking();
             ShowUIEffect();
         }
 
         public void UpdateUIEffectRank(PlayerRanking playerRanking)
         {
+            if (!isOpen)
+            {
+                return;
+            }
+
             if (!configuration.PVPRanking)
             {
                 return;
@@ -68,6 +73,11 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         public void UpdateUIEffect()
         {
+            if (!isOpen)
+            {
+                return;
+            }
+
             string kills = PlayerData.Kills.ToString("N0");
             string deaths = PlayerData.PVPDeaths.ToString("N0");
             string headshots = PlayerData.Headshots.ToString("N0");            
@@ -105,6 +115,11 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         public void ShowUIEffect()
         {
+            if (!isOpen)
+            {
+                return;
+            }
+
             EffectManager.sendUIEffectVisibility(Key, TransportConnection, true, "PlayerStatsUIHolder", true);
         }
 

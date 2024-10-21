@@ -15,6 +15,7 @@ namespace RestoreMonarchy.PlayerStats
         public bool EnableUIEffect { get; set; }
         public ushort UIEffectId { get; set; }
         public bool ShowUIEffectByDefault { get; set; }
+        public bool EnableJoinLeaveMessages { get; set; } = true;
         public bool EnablePVPStats { get; set; }
         public bool EnablePVEStats { get; set; }
         public bool PVPRanking { get; set; }
@@ -35,6 +36,7 @@ namespace RestoreMonarchy.PlayerStats
             EnableUIEffect = true;
             UIEffectId = 22512;
             ShowUIEffectByDefault = true;
+            EnableJoinLeaveMessages = true;
             EnablePVPStats = true;
             EnablePVEStats = true;
             PVPRanking = true;
