@@ -82,7 +82,7 @@ namespace RestoreMonarchy.PlayerStats.Components
             string deaths = PlayerData.PVPDeaths.ToString("N0");
             string headshots = PlayerData.Headshots.ToString("N0");            
             string hsPercentage = (PlayerData.Kills == 0 ? "0" : (((decimal)PlayerData.Headshots / PlayerData.Kills) * 100).ToString("N0")) + "%";
-            string kdr = PlayerData.PVPDeaths == 0 ? PlayerData.Kills.ToString("N2") : (PlayerData.Kills / PlayerData.PVPDeaths).ToString("N2");
+            string kdr = PlayerData.PVPDeaths == 0 ? PlayerData.Kills.ToString("N2") : ((decimal)PlayerData.Kills / PlayerData.PVPDeaths).ToString("N2");
 
             EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Stats_Text", kills);
             EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Stats_Text", deaths);

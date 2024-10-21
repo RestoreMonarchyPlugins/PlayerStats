@@ -176,6 +176,11 @@ namespace RestoreMonarchy.PlayerStats
                 }
             }
 
+            if (playersData.Count == 0)
+            {
+                return;
+            }
+
             if (async)
             {
                 ThreadHelper.RunAsynchronously(() => Database.Save(playersData));
@@ -201,11 +206,11 @@ namespace RestoreMonarchy.PlayerStats
                         {
                             if (playerRanking.IsUnranked())
                             {
-                                SendMessageToPlayer(player, "JoinMessageNoRank", player.CharacterName);
+                                SendMessageToPlayer(null, "JoinMessageNoRank", player.CharacterName);
                             }
                             else
                             {
-                                SendMessageToPlayer(player, "JoinMessage", playerRanking.Rank.ToString("N0"), player.CharacterName);
+                                SendMessageToPlayer(null, "JoinMessage", playerRanking.Rank.ToString("N0"), player.CharacterName);
                             }
                         });
                     });
@@ -232,11 +237,11 @@ namespace RestoreMonarchy.PlayerStats
                         {
                             if (playerRanking.IsUnranked())
                             {
-                                SendMessageToPlayer(player, "LeaveMessageNoRank", player.CharacterName);
+                                SendMessageToPlayer(null, "LeaveMessageNoRank", player.CharacterName);
                             }
                             else
                             {
-                                SendMessageToPlayer(player, "LeaveMessage", playerRanking.Rank, player.CharacterName);
+                                SendMessageToPlayer(null, "LeaveMessage", playerRanking.Rank, player.CharacterName);
                             }
                         });
                     });
@@ -329,8 +334,14 @@ namespace RestoreMonarchy.PlayerStats
                 return;
             }
 
-            UnturnedPlayer unturnedPlayer = (UnturnedPlayer)player;
-            ChatManager.serverSendMessage(msg, MessageColor, null, unturnedPlayer.SteamPlayer(), EChatMode.SAY, Configuration.Instance.MessageIconUrl, true);
+            SteamPlayer steamPlayer = null;
+            if (player != null)
+            {
+                UnturnedPlayer unturnedPlayer = (UnturnedPlayer)player;
+                steamPlayer = unturnedPlayer.SteamPlayer();
+            }
+            
+            ChatManager.serverSendMessage(msg, MessageColor, null, steamPlayer, EChatMode.SAY, Configuration.Instance.MessageIconUrl, true);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                 {
                     string kills = playerData.Kills.ToString("N0");
                     string deaths = playerData.PVPDeaths.ToString("N0");
-                    string kdr = deaths == "0" ? kills : (playerData.Kills / playerData.PVPDeaths).ToString("N2");
+                    string kdr = deaths == "0" ? kills : ((decimal)playerData.Kills / playerData.PVPDeaths).ToString("N2");
                     string hsPercentage = (playerData.Kills == 0 ? "0" : (((decimal)playerData.Headshots / playerData.Kills) * 100).ToString("N0")) + "%";
 
                     if (caller.Id == playerData.SteamId.ToString())
