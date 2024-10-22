@@ -170,7 +170,7 @@ namespace RestoreMonarchy.PlayerStats
             foreach (Player player in PlayerTool.EnumeratePlayers())
             {
                 PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
-                if (component != null)
+                if (component != null && component.Loaded)
                 {
                     playersData.Add(component.PlayerData);
                 }
@@ -204,7 +204,7 @@ namespace RestoreMonarchy.PlayerStats
                         PlayerRanking playerRanking = Database.GetPlayerRanking(component.SteamId);
                         ThreadHelper.RunSynchronously(() =>
                         {
-                            if (playerRanking.IsUnranked())
+                            if (playerRanking == null || playerRanking.IsUnranked())
                             {
                                 SendMessageToPlayer(null, "JoinMessageNoRank", player.CharacterName);
                             }
@@ -223,10 +223,13 @@ namespace RestoreMonarchy.PlayerStats
             PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
             if (component != null)
             {
-                ThreadHelper.RunAsynchronously(() =>
+                if (component.Loaded)
                 {
-                    Database.AddOrUpdatePlayer(component.PlayerData);
-                });
+                    ThreadHelper.RunAsynchronously(() =>
+                    {
+                        Database.AddOrUpdatePlayer(component.PlayerData);
+                    });
+                }
 
                 if (Configuration.Instance.EnableJoinLeaveMessages)
                 {
@@ -235,7 +238,7 @@ namespace RestoreMonarchy.PlayerStats
                         PlayerRanking playerRanking = Database.GetPlayerRanking(component.SteamId);
                         ThreadHelper.RunSynchronously(() =>
                         {
-                            if (playerRanking.IsUnranked())
+                            if (playerRanking == null || playerRanking.IsUnranked())
                             {
                                 SendMessageToPlayer(null, "LeaveMessageNoRank", player.CharacterName);
                             }

@@ -4,9 +4,11 @@ using Rocket.API.Serialisation;
 using Rocket.Core;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Logger = Rocket.Core.Logging.Logger;
 
 namespace RestoreMonarchy.PlayerStats.Components
 {
@@ -20,6 +22,7 @@ namespace RestoreMonarchy.PlayerStats.Components
         public ulong SteamId => Player.channel.owner.playerID.steamID.m_SteamID;
         public PlayerData PlayerData { get; private set; }
         public PlayerData SessionPlayerData { get; private set; }
+        public bool Loaded { get; private set; }
 
         private Reward GetCurrentReward() => configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
         private Reward GetNextReward() => configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Kills);
@@ -27,20 +30,50 @@ namespace RestoreMonarchy.PlayerStats.Components
         void Awake()
         {
             Player = gameObject.GetComponent<Player>();
+            PlayerData = new() { SteamId = SteamId, Name = Name }; // set to avoid null reference exception
+            SessionPlayerData = new()
+            {
+                SteamId = SteamId,
+                Name = Name
+            };
+
             ThreadHelper.RunAsynchronously(() =>
-            {   
-                PlayerData playerData = pluginInstance.Database.GetOrAddPlayer(SteamId, Name);
+            {
+                PlayerData playerData;
+                try
+                {
+                    playerData = pluginInstance.Database.GetOrAddPlayer(SteamId, Name);
+                    Loaded = true;
+                }
+                catch (Exception ex)
+                {
+                    ThreadHelper.RunSynchronously(() =>
+                    {
+                        Logger.Log($"Failed to load player data for {Name} ({SteamId}): {ex.Message}");
+                    });                    
+                    playerData = PlayerData;
+                }
+
                 ThreadHelper.RunSynchronously(() =>
                 {
                     if (Player != null && this != null)
                     {
                         playerData.Name = Name;
                         PlayerData = playerData;
-                        SessionPlayerData = new()
-                        {
-                            SteamId = SteamId,
-                            Name = Name
-                        };
+
+                        PlayerData.Kills += SessionPlayerData.Kills;
+                        PlayerData.Headshots += SessionPlayerData.Headshots;
+                        PlayerData.PVPDeaths += SessionPlayerData.PVPDeaths;
+                        PlayerData.PVEDeaths += SessionPlayerData.PVEDeaths;
+                        PlayerData.Zombies += SessionPlayerData.Zombies;
+                        PlayerData.MegaZombies += SessionPlayerData.MegaZombies;
+                        PlayerData.Animals += SessionPlayerData.Animals;
+                        PlayerData.Resources += SessionPlayerData.Resources;
+                        PlayerData.Harvests += SessionPlayerData.Harvests;
+                        PlayerData.Fish += SessionPlayerData.Fish;
+                        PlayerData.Structures += SessionPlayerData.Structures;
+                        PlayerData.Barricades += SessionPlayerData.Barricades;
+                        PlayerData.Playtime += SessionPlayerData.Playtime;
 
                         bool enabled = !playerData.UIDisabled ?? configuration.ShowUIEffectByDefault;
                         if (configuration.EnableUIEffect && enabled)
