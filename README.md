@@ -14,6 +14,10 @@ Player PVP and PVE stats with ranking and rewards.
 ## Credits
 UI made by **Soer (Unbeaten)**. He also sponsored the creation of this plugin.
 
+## Workshop (optional)
+The UI is optional and only for PVP stats. You can use the following workshop item to display the stats in-game.  
+[Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593) - `3352126593`
+
 ## Commands
 * `/playtime [player]` - Displays your or other player's playtime
 * `/stats [player]` - Displays your or other player's stats
@@ -22,10 +26,6 @@ UI made by **Soer (Unbeaten)**. He also sponsored the creation of this plugin.
 * `/splaytime [player]` - Displays your or other player's session playtime (since they joined)
 * `/ranking` - Displays the top players ranking
 * `/statsui` - Toggles the stats UI
-
-## Workshop (optional)
-The UI is optional and only for PVP stats. You can use the following workshop item to display the stats in-game.
-[Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593) - `3352126593`
 
 ## Configuration
 ```xml
