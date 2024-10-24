@@ -3,6 +3,7 @@
     public class PlayerRanking
     {
         public int Rank { get; set; }
+        public int PVERank { get; set; }
         public ulong SteamId { get; set; }
         public string Name { get; set; }
         public int Kills { get; set; }

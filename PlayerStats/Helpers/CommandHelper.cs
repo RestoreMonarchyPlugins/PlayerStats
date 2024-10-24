@@ -10,9 +10,9 @@ namespace RestoreMonarchy.PlayerStats.Helpers
     {
         private static PlayerStatsPlugin pluginInstance => PlayerStatsPlugin.Instance;
 
-        internal static void GetPlayerData(IRocketPlayer caller, string[] command, Action<PlayerData> callback)
+        internal static void GetPlayerData(IRocketPlayer caller, string[] command, Action<PlayerStatsData> callback)
         {
-            PlayerData playerData = null;
+            PlayerStatsData playerData = null;
             UnturnedPlayer unturnedPlayer = null;
             ulong steamId = 0;
             if (command.Length == 0)

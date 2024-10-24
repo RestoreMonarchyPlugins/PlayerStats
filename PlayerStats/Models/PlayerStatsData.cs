@@ -2,7 +2,7 @@
 
 namespace RestoreMonarchy.PlayerStats.Models
 {
-    public class PlayerData
+    public class PlayerStatsData
     {
         public ulong SteamId { get; set; }
         public string Name { get; set; }

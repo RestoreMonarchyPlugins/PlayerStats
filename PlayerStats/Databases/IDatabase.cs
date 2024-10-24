@@ -7,11 +7,11 @@ namespace RestoreMonarchy.PlayerStats.Databases
     {
         void Initialize();
         void Reload();
-        void Save(IEnumerable<PlayerData> playersData);
-        PlayerData GetPlayer(ulong steamId);
-        void AddOrUpdatePlayer(PlayerData player);
-        PlayerData GetOrAddPlayer(ulong steamId, string name);
-        PlayerRanking GetPlayerRanking(ulong steamId);
-        IEnumerable<PlayerRanking> GetPlayerRankings(int amount);
+        void Save(IEnumerable<PlayerStatsData> playersData);
+        PlayerStatsData GetPlayer(ulong steamId);
+        void AddOrUpdatePlayer(PlayerStatsData player);
+        PlayerStatsData GetOrAddPlayer(ulong steamId, string name);
+        PlayerRanking GetPlayerRanking(ulong steamId, string orderBy = null);
+        IEnumerable<PlayerRanking> GetPlayerRankings(int amount, string orderBy = null);
     }
 }

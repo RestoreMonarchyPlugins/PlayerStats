@@ -36,7 +36,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                 return;
             }
 
-            PlayerData playerData = component.SessionPlayerData;
+            PlayerStatsData playerData = component.SessionPlayerData;
 
             TimeSpan timespan = TimeSpan.FromSeconds(playerData.Playtime);
             string playtime = pluginInstance.FormatTimespan(timespan);

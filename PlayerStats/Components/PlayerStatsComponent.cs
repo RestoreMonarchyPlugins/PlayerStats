@@ -20,8 +20,8 @@ namespace RestoreMonarchy.PlayerStats.Components
         public Player Player { get; private set; }
         public string Name => Player.channel.owner.playerID.characterName;
         public ulong SteamId => Player.channel.owner.playerID.steamID.m_SteamID;
-        public PlayerData PlayerData { get; private set; }
-        public PlayerData SessionPlayerData { get; private set; }
+        public PlayerStatsData PlayerData { get; private set; }
+        public PlayerStatsData SessionPlayerData { get; private set; }
         public bool Loaded { get; private set; }
 
         private Reward GetCurrentReward() => configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
@@ -39,7 +39,7 @@ namespace RestoreMonarchy.PlayerStats.Components
 
             ThreadHelper.RunAsynchronously(() =>
             {
-                PlayerData playerData;
+                PlayerStatsData playerData;
                 try
                 {
                     playerData = pluginInstance.Database.GetOrAddPlayer(SteamId, Name);

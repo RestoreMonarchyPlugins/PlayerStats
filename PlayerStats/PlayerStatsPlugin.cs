@@ -6,7 +6,6 @@ using Rocket.API;
 using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
-using Rocket.Core.Steam;
 using Rocket.Unturned;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Events;
@@ -15,8 +14,8 @@ using SDG.Unturned;
 using Steamworks;
 using System;
 using System.Collections.Generic;
-using System.Configuration.Internal;
 using System.Linq;
+using System.Reflection;
 
 namespace RestoreMonarchy.PlayerStats
 {
@@ -48,6 +47,8 @@ namespace RestoreMonarchy.PlayerStats
             UnturnedPlayerEvents.OnPlayerUpdateStat += OnPlayerUpdatedStat;
             StructureManager.onStructureSpawned += OnStructureSpawned;
             BarricadeManager.onBarricadeSpawned += OnBarricadeSpawned;
+            Provider.onCommenceShutdown += onCommenceShutdown;
+            Provider.onServerShutdown += OnServerShutdown;
 
             foreach (Player player in PlayerTool.EnumeratePlayers())
             {
@@ -68,9 +69,10 @@ namespace RestoreMonarchy.PlayerStats
             UnturnedPlayerEvents.OnPlayerUpdateStat -= OnPlayerUpdatedStat;
             StructureManager.onStructureSpawned -= OnStructureSpawned;
             BarricadeManager.onBarricadeSpawned -= OnBarricadeSpawned;
+            Provider.onCommenceShutdown -= onCommenceShutdown;
 
             CancelInvoke(nameof(Save));
-            Save();
+            Save(false);
 
             foreach (Player player in PlayerTool.EnumeratePlayers())
             {
@@ -166,15 +168,22 @@ namespace RestoreMonarchy.PlayerStats
 
         private void Save(bool async = true)
         {
-            List<PlayerData> playersData = [];
-            foreach (Player player in PlayerTool.EnumeratePlayers())
+            List<PlayerStatsData> playersData = [];
+
+            if (shutdownPlayerStats != null)
             {
-                PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
-                if (component != null && component.Loaded)
+                playersData = shutdownPlayerStats;
+            } else
+            {
+                foreach (Player player in PlayerTool.EnumeratePlayers())
                 {
-                    playersData.Add(component.PlayerData);
+                    PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
+                    if (component != null && component.Loaded)
+                    {
+                        playersData.Add(component.PlayerData);
+                    }
                 }
-            }
+            }            
 
             if (playersData.Count == 0)
             {
@@ -187,6 +196,36 @@ namespace RestoreMonarchy.PlayerStats
             } else
             {
                 Database.Save(playersData);
+            }            
+        }
+
+        private List<PlayerStatsData> shutdownPlayerStats = null;
+
+        // get players data before shutdown
+        private void onCommenceShutdown()
+        {
+            List<PlayerStatsData> playersData = [];
+            foreach (Player player in PlayerTool.EnumeratePlayers())
+            {
+                PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
+                if (component != null && component.Loaded)
+                {
+                    playersData.Add(component.PlayerData);
+                }
+            }
+
+            shutdownPlayerStats = playersData;
+        }
+
+        private void OnServerShutdown()
+        {
+            // save after players are already disconnected from the server
+            if (shutdownPlayerStats != null && shutdownPlayerStats.Any())
+            {
+                Logger.Log("Server is shutting down, saving player stats...", ConsoleColor.Yellow);
+                Save(false);
+                shutdownPlayerStats = [];
+                Logger.Log("Player stats have been saved!", ConsoleColor.Yellow);
             }            
         }
 
@@ -220,6 +259,11 @@ namespace RestoreMonarchy.PlayerStats
 
         private void OnPlayerDisconnected(UnturnedPlayer player)
         {
+            if (shutdownPlayerStats != null)
+            {
+                return;
+            }
+
             PlayerStatsComponent component = player.GetComponent<PlayerStatsComponent>();
             if (component != null)
             {

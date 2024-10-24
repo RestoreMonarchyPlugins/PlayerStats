@@ -37,7 +37,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                 return;
             }
 
-            PlayerData playerData = component.SessionPlayerData;
+            PlayerStatsData playerData = component.SessionPlayerData;
             if (pluginInstance.Configuration.Instance.EnablePVPStats)
             {
                 string kills = playerData.Kills.ToString("N0");

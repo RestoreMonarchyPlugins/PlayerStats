@@ -12,12 +12,17 @@ namespace RestoreMonarchy.PlayerStats.Databases
         private PlayerStatsPlugin pluginInstance => PlayerStatsPlugin.Instance;
         private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
 
-        private List<PlayerData> playersData = new();
+        private List<PlayerStatsData> playersData = new();
 
-        public IEnumerable<PlayerRanking> GetPlayerRankings(int amount)
+        public IEnumerable<PlayerRanking> GetPlayerRankings(int amount, string orderBy = null)
         {
+            if (orderBy == null)
+            {
+                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+            }
+
             List<PlayerRanking> rankings = new();
-            if (configuration.PVPRanking)
+            if (orderBy == "Kills")
             {
                 rankings = playersData.OrderByDescending(x => x.Kills).Take(amount).Select((x, i) => new PlayerRanking
                 {
@@ -41,12 +46,17 @@ namespace RestoreMonarchy.PlayerStats.Databases
             return rankings;
         }
 
-        public PlayerRanking GetPlayerRanking(ulong steamId)
+        public PlayerRanking GetPlayerRanking(ulong steamId, string orderBy = null)
         {
-            PlayerData player = GetPlayer(steamId);
+            PlayerStatsData player = GetPlayer(steamId);
             if (player == null)
             {
                 return null;
+            }
+
+            if (orderBy == null)
+            {
+                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
             }
 
             PlayerRanking ranking = new();
@@ -54,7 +64,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
             ranking.Name = player.Name;
             ranking.Kills = player.Kills;
             ranking.Zombies = player.Zombies;
-            if (configuration.PVPRanking)
+            if (orderBy == "Kills")
             {
                 ranking.Rank = playersData.Count(x => x.Kills > player.Kills) + 1;
                 
@@ -66,17 +76,17 @@ namespace RestoreMonarchy.PlayerStats.Databases
             return ranking;
         }
 
-        public void AddOrUpdatePlayer(PlayerData player)
+        public void AddOrUpdatePlayer(PlayerStatsData player)
         {
             player.LastUpdated = DateTime.UtcNow;
         }
 
-        public PlayerData GetOrAddPlayer(ulong steamId, string name)
+        public PlayerStatsData GetOrAddPlayer(ulong steamId, string name)
         {
-            PlayerData player = playersData.FirstOrDefault(x => x.SteamId == steamId);
+            PlayerStatsData player = playersData.FirstOrDefault(x => x.SteamId == steamId);
             if (player == null)
             {
-                player = new PlayerData
+                player = new PlayerStatsData
                 {
                     SteamId = steamId,
                     Name = name
@@ -87,9 +97,9 @@ namespace RestoreMonarchy.PlayerStats.Databases
             return player;
         }
 
-        public PlayerData GetPlayer(ulong steamId)
+        public PlayerStatsData GetPlayer(ulong steamId)
         {
-            PlayerData player = playersData.FirstOrDefault(x => x.SteamId == steamId);
+            PlayerStatsData player = playersData.FirstOrDefault(x => x.SteamId == steamId);
 
             return player;
         }
@@ -106,19 +116,19 @@ namespace RestoreMonarchy.PlayerStats.Databases
             if (File.Exists(path))
             {
                 string text = File.ReadAllText(path);
-                playersData = JsonConvert.DeserializeObject<List<PlayerData>>(text);
+                playersData = JsonConvert.DeserializeObject<List<PlayerStatsData>>(text);
             }
             else
             {
-                playersData = new List<PlayerData>();
+                playersData = new List<PlayerStatsData>();
                 string text = JsonConvert.SerializeObject(playersData, Formatting.Indented);
                 File.WriteAllText(path, text);
             }
         }
 
-        public void Save(IEnumerable<PlayerData> playersData)
+        public void Save(IEnumerable<PlayerStatsData> playersData)
         {
-            foreach (PlayerData player in playersData)
+            foreach (PlayerStatsData player in playersData)
             {
                 player.LastUpdated = DateTime.UtcNow;
             }

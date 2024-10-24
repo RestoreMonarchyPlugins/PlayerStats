@@ -15,9 +15,13 @@ namespace RestoreMonarchy.PlayerStats.Databases
         private MySqlConnection connection => new(configuration.MySQLConnectionString);
         private string FormatSql(string query) => query.Replace("PlayerStats", configuration.PlayerStatsTableName);
 
-        public IEnumerable<PlayerRanking> GetPlayerRankings(int amount)
+        public IEnumerable<PlayerRanking> GetPlayerRankings(int amount, string orderBy = null)
         {
-            string orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+            if (orderBy == null)
+            {
+                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+            }
+            
             string query = FormatSql($@"
                 SELECT 
                     SteamId, 
@@ -35,9 +39,13 @@ namespace RestoreMonarchy.PlayerStats.Databases
             }
         }
 
-        public PlayerRanking GetPlayerRanking(ulong steamId)
+        public PlayerRanking GetPlayerRanking(ulong steamId, string orderBy = null)
         {
-            string orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+            if (orderBy == null)
+            {
+                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+            }
+
             string query = FormatSql($@"
                 SELECT 
                     p1.SteamId, 
@@ -54,7 +62,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
             }
         }
 
-        public void AddOrUpdatePlayer(PlayerData player)
+        public void AddOrUpdatePlayer(PlayerStatsData player)
         {
             string query = FormatSql(@"
                 INSERT INTO PlayerStats (
@@ -78,12 +86,12 @@ namespace RestoreMonarchy.PlayerStats.Databases
             }
         }
 
-        public PlayerData GetOrAddPlayer(ulong steamId, string name)
+        public PlayerStatsData GetOrAddPlayer(ulong steamId, string name)
         {
-            PlayerData player = GetPlayer(steamId);
+            PlayerStatsData player = GetPlayer(steamId);
             if (player == null)
             {
-                player = new PlayerData
+                player = new PlayerStatsData
                 {
                     SteamId = steamId,
                     Name = name
@@ -93,13 +101,13 @@ namespace RestoreMonarchy.PlayerStats.Databases
             return player;
         }
 
-        public PlayerData GetPlayer(ulong steamId)
+        public PlayerStatsData GetPlayer(ulong steamId)
         {
             string query = FormatSql("SELECT * FROM PlayerStats WHERE SteamId = @steamId");
 
             using (MySqlConnection conn = connection)
             {
-                return conn.QueryFirstOrDefault<PlayerData>(query, new { steamId });
+                return conn.QueryFirstOrDefault<PlayerStatsData>(query, new { steamId });
             }
         }
 
@@ -124,7 +132,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
             // No need to implement for MySQL as data is stored in the database
         }
 
-        public void Save(IEnumerable<PlayerData> playersData)
+        public void Save(IEnumerable<PlayerStatsData> playersData)
         {
             string query = FormatSql(@"
                 INSERT INTO PlayerStats (
@@ -152,7 +160,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
                     LastUpdated = VALUES(LastUpdated)");
 
             DateTime now = DateTime.UtcNow;
-            IEnumerable<PlayerData> updatedPlayersData = playersData.Select(p =>
+            IEnumerable<PlayerStatsData> updatedPlayersData = playersData.Select(p =>
             {
                 p.LastUpdated = now;
                 return p;
