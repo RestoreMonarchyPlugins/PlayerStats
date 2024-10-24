@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using RestoreMonarchy.PlayerStats.Helpers;
 using RestoreMonarchy.PlayerStats.Models;
+using Rocket.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,10 +120,12 @@ namespace RestoreMonarchy.PlayerStats.Databases
                 conn.Execute(FormatSql(tables));
 
                 const string migrationCheck = "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'PlayerStats' AND COLUMN_NAME = 'PlayerID';";
-                if (conn.ExecuteScalar<int>(migrationCheck) > 0)
+                if (conn.ExecuteScalar<int>(FormatSql(migrationCheck)) > 0)
                 {
+                    Logger.Log($"Migrating old {configuration.PlayerStatsTableName} table...");
                     string migration = ResourceHelper.GetResourceFileContent("migration.txt");
                     conn.Execute(FormatSql(migration));
+                    Logger.Log("Migration completed!");
                 }
             }
         }

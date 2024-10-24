@@ -259,7 +259,7 @@ namespace RestoreMonarchy.PlayerStats
 
         private void OnPlayerDisconnected(UnturnedPlayer player)
         {
-            if (shutdownPlayerStats != null)
+            if (shutdownPlayerStats != null && shutdownPlayerStats.Exists(x => x.SteamId == player.CSteamID.m_SteamID))
             {
                 return;
             }
