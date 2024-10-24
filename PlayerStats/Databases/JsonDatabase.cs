@@ -121,7 +121,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
             else
             {
                 playersData = new List<PlayerStatsData>();
-                string text = JsonConvert.SerializeObject(playersData, Formatting.Indented);
+                string text = JsonConvert.SerializeObject(playersData);
                 File.WriteAllText(path, text);
             }
         }

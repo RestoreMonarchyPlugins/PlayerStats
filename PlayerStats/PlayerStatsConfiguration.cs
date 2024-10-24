@@ -15,7 +15,7 @@ namespace RestoreMonarchy.PlayerStats
         public bool EnableUIEffect { get; set; }
         public ushort UIEffectId { get; set; }
         public bool ShowUIEffectByDefault { get; set; }
-        public bool EnableJoinLeaveMessages { get; set; } = true;
+        public bool EnableJoinLeaveMessages { get; set; }
         public bool EnablePVPStats { get; set; }
         public bool EnablePVEStats { get; set; }
         public bool PVPRanking { get; set; }
@@ -33,7 +33,7 @@ namespace RestoreMonarchy.PlayerStats
             MySQLConnectionString = "Server=127.0.0.1;Port=3306;Database=unturned;Uid=root;Pwd=passw;";
             PlayerStatsTableName = "PlayerStats";
             SaveIntervalSeconds = 300;
-            EnableUIEffect = true;
+            EnableUIEffect = false;
             UIEffectId = 22512;
             ShowUIEffectByDefault = true;
             EnableJoinLeaveMessages = true;

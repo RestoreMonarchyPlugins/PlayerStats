@@ -137,6 +137,11 @@ namespace RestoreMonarchy.PlayerStats.Databases
 
         public void Save(IEnumerable<PlayerStatsData> playersData)
         {
+            if (!playersData.Any())
+            {
+                return;
+            }
+
             string query = FormatSql(@"
                 INSERT INTO PlayerStats (
                     SteamId, Name, Kills, Headshots, PVPDeaths, PVEDeaths, Zombies, MegaZombies,

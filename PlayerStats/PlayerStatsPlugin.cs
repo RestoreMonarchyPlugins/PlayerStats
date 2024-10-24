@@ -70,6 +70,7 @@ namespace RestoreMonarchy.PlayerStats
             StructureManager.onStructureSpawned -= OnStructureSpawned;
             BarricadeManager.onBarricadeSpawned -= OnBarricadeSpawned;
             Provider.onCommenceShutdown -= onCommenceShutdown;
+            Provider.onServerShutdown -= OnServerShutdown;
 
             CancelInvoke(nameof(Save));
             Save(false);
@@ -183,11 +184,6 @@ namespace RestoreMonarchy.PlayerStats
                         playersData.Add(component.PlayerData);
                     }
                 }
-            }            
-
-            if (playersData.Count == 0)
-            {
-                return;
             }
 
             if (async)
@@ -220,13 +216,13 @@ namespace RestoreMonarchy.PlayerStats
         private void OnServerShutdown()
         {
             // save after players are already disconnected from the server
-            if (shutdownPlayerStats != null && shutdownPlayerStats.Any())
+            if (shutdownPlayerStats != null)
             {
                 Logger.Log("Server is shutting down, saving player stats...", ConsoleColor.Yellow);
                 Save(false);
                 shutdownPlayerStats = [];
                 Logger.Log("Player stats have been saved!", ConsoleColor.Yellow);
-            }            
+            }
         }
 
         private void OnPlayerConnected(UnturnedPlayer player)

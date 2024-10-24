@@ -13,7 +13,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
         public void Execute(IRocketPlayer caller, string[] command)
         {
             int amount = 5;
-            if (caller is ConsolePlayer && command.Length > 0)
+            if (command.Length > 0 && caller is ConsolePlayer)
             {
                 int.TryParse(command[0], out amount);
             }

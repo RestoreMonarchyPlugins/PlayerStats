@@ -16,7 +16,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            if (command.Length < 0 && caller is ConsolePlayer)
+            if (command.Length < 1 && caller is ConsolePlayer)
             {
                 pluginInstance.SendMessageToPlayer(caller, "SessionPlaytimeCommandSyntax");
                 return;
