@@ -6,6 +6,7 @@ Player PVP and PVE stats with ranking and rewards.
 * Displays player stats, playtime, ranking, and session stats using commands
 * Supports PVP (Kills) and PVE (Zombie Kills) ranking
 * Permission group rewards for reaching a certain number of kills
+* Automatic migration from Arechi PlayerStats plugin
 * UI for PVP stats
 
 **PVP Stats:** Kills, Deaths, KDR, HS%  
