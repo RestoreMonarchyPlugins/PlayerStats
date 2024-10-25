@@ -1,5 +1,5 @@
 # Player Stats
-Player PVP and PVE stats with ranking and rewards.
+Player PVP and PVE stats with ranking, rewards and UI.
 
 ## Features
 * Stores player stats in a JSON file or MySQL database
