@@ -28,6 +28,17 @@ The UI is optional and only for PVP stats. You can use the following workshop it
 * `/ranking` - Displays the top players ranking
 * `/statsui` - Toggles the stats UI
 
+## Permissions
+```xml
+<Permission Cooldown="0">playtime</Permission>
+<Permission Cooldown="0">stats</Permission>
+<Permission Cooldown="0">rank</Permission>
+<Permission Cooldown="0">sstats</Permission>
+<Permission Cooldown="0">splaytime</Permission>
+<Permission Cooldown="0">ranking</Permission>
+<Permission Cooldown="0">statsui</Permission>
+```
+
 ## Configuration
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
