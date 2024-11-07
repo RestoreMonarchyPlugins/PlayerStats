@@ -22,5 +22,11 @@
 	  <PackageReference Include="MySql.Data" Version="8.0.30" />
 	  <PackageReference Include="RestoreMonarchy.RocketRedist" Version="3.*" ExcludeAssets="runtime" />
   </ItemGroup>
+  
+  <ItemGroup>
+	<Content Include="..\lib\output\*.*">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>

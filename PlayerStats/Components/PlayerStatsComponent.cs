@@ -24,8 +24,28 @@ namespace RestoreMonarchy.PlayerStats.Components
         public PlayerStatsData SessionPlayerData { get; private set; }
         public bool Loaded { get; private set; }
 
-        private Reward GetCurrentReward() => configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
-        private Reward GetNextReward() => configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Kills);
+        private Reward GetCurrentReward() 
+        { 
+            if (configuration.PVPRewards)
+            {
+                return configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
+            } else
+            {
+                return configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Zombies);
+            }
+        }
+
+        private Reward GetNextReward()
+        {
+            if (configuration.PVPRewards)
+            {
+                return configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Kills);
+            }
+            else
+            {
+                return configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Zombies);
+            }
+        }
 
         void Awake()
         {
@@ -161,6 +181,10 @@ namespace RestoreMonarchy.PlayerStats.Components
             {
                 PlayerData.PVEDeaths++;
                 SessionPlayerData.PVEDeaths++;
+                if (!configuration.PVPUI)
+                {
+                    UpdateUIEffect();
+                }
             }
         }
 
@@ -221,6 +245,11 @@ namespace RestoreMonarchy.PlayerStats.Components
                     PlayerData.Harvests++;
                     SessionPlayerData.Harvests++;
                     break;
+            }
+
+            if (!configuration.PVPUI)
+            {
+                UpdateUIEffect();
             }
         }
 

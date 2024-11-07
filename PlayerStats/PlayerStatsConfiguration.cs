@@ -20,6 +20,7 @@ namespace RestoreMonarchy.PlayerStats
         public bool EnablePVEStats { get; set; }
         public bool PVPRanking { get; set; }
         public bool PVPRewards { get; set; }
+        public bool PVPUI { get; set; } = true;
         public int MinimumRankingTreshold { get; set; }
         public bool EnableRewards { get; set; }
         public Reward[] Rewards { get; set; }
@@ -41,6 +42,7 @@ namespace RestoreMonarchy.PlayerStats
             EnablePVEStats = true;
             PVPRanking = true;
             PVPRewards = true;
+            PVPUI = true;
             MinimumRankingTreshold = 25;
             EnableRewards = true;
             Rewards =

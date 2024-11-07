@@ -22,21 +22,33 @@ namespace RestoreMonarchy.PlayerStats.Components
             isOpen = true;
             EffectManager.sendUIEffect(configuration.UIEffectId, Key, TransportConnection, true);
 
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Text", pluginInstance.Translate("UI_Kills"));
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Text", pluginInstance.Translate("UI_Deaths"));
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_HeadShot_Text", pluginInstance.Translate("UI_Headshots"));
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Accuracy_Text", pluginInstance.Translate("UI_Accuracy"));
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Rank_Text", pluginInstance.Translate("UI_Rank"));
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_KD_Text", pluginInstance.Translate("UI_KDR"));
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Footer_Text", pluginInstance.Translate("UI_Footer"));
+            // Use different translations based on UI mode
+            if (configuration.PVPUI)
+            {
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Text", pluginInstance.Translate("UI_Kills"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Text", pluginInstance.Translate("UI_Deaths"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_HeadShot_Text", pluginInstance.Translate("UI_Headshots"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Accuracy_Text", pluginInstance.Translate("UI_Accuracy"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_KD_Text", pluginInstance.Translate("UI_KDR"));
+            }
+            else
+            {
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Text", pluginInstance.Translate("UI_ZombieKills"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Text", pluginInstance.Translate("UI_MegaZombieKills"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_HeadShot_Text", pluginInstance.Translate("UI_AnimalKills"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Accuracy_Text", pluginInstance.Translate("UI_ResourcesGathered"));
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_KD_Text", pluginInstance.Translate("UI_PVEDeaths"));
+            }
 
+            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Rank_Text", pluginInstance.Translate("UI_Rank"));
+            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Footer_Text", pluginInstance.Translate("UI_Footer"));
             EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Rank_Stats_Text", "-");
 
-
-            if (configuration.EnableRewards && configuration.PVPRewards)
+            if (configuration.EnableRewards)
             {
                 EffectManager.sendUIEffectVisibility(Key, TransportConnection, true, "PlayerStats_ProgressBar", true);
-            } else
+            }
+            else
             {
                 EffectManager.sendUIEffectVisibility(Key, TransportConnection, true, "PlayerStats_ProgressBar", false);
             }
@@ -44,29 +56,6 @@ namespace RestoreMonarchy.PlayerStats.Components
             UpdateUIEffect();
             UpdateUIRanking();
             ShowUIEffect();
-        }
-
-        public void UpdateUIEffectRank(PlayerRanking playerRanking)
-        {
-            if (!isOpen)
-            {
-                return;
-            }
-
-            if (!configuration.PVPRanking)
-            {
-                return;
-            }
-
-            string rankString;
-            if (playerRanking.IsUnranked())
-            {
-                rankString = "-";
-            } else
-            {
-                rankString = "#" + playerRanking.Rank.ToString("N0");
-            }
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Rank_Stats_Text", rankString);
         }
 
         private int prevPercentageProgress = 0;
@@ -78,39 +67,89 @@ namespace RestoreMonarchy.PlayerStats.Components
                 return;
             }
 
-            string kills = PlayerData.Kills.ToString("N0");
-            string deaths = PlayerData.PVPDeaths.ToString("N0");
-            string headshots = PlayerData.Headshots.ToString("N0");            
-            string hsPercentage = (PlayerData.Kills == 0 ? "0" : (((decimal)PlayerData.Headshots / PlayerData.Kills) * 100).ToString("N0")) + "%";
-            string kdr = PlayerData.PVPDeaths == 0 ? PlayerData.Kills.ToString("N2") : ((decimal)PlayerData.Kills / PlayerData.PVPDeaths).ToString("N2");
+            if (configuration.PVPUI)
+            {
+                // PVP Stats
+                string kills = PlayerData.Kills.ToString("N0");
+                string deaths = PlayerData.PVPDeaths.ToString("N0");
+                string headshots = PlayerData.Headshots.ToString("N0");
+                string hsPercentage = (PlayerData.Kills == 0 ? "0" : (((decimal)PlayerData.Headshots / PlayerData.Kills) * 100).ToString("N0")) + "%";
+                string kdr = PlayerData.PVPDeaths == 0 ? PlayerData.Kills.ToString("N2") : ((decimal)PlayerData.Kills / PlayerData.PVPDeaths).ToString("N2");
 
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Stats_Text", kills);
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Stats_Text", deaths);
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_HeadShot_Stats_Text", headshots);
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Accuracy_Stats_Text", hsPercentage);
-            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_KD_Stats_Text", kdr);
-                        
-            if (configuration.EnableRewards && configuration.PVPRewards)
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Stats_Text", kills);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Stats_Text", deaths);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_HeadShot_Stats_Text", headshots);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Accuracy_Stats_Text", hsPercentage);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_KD_Stats_Text", kdr);
+            }
+            else
+            {
+                // PVE Stats
+                string zombieKills = PlayerData.Zombies.ToString("N0");
+                string megaZombieKills = PlayerData.MegaZombies.ToString("N0");
+                string animalKills = PlayerData.Animals.ToString("N0");
+                string resourcesGathered = PlayerData.Resources.ToString("N0");
+                string pveDeaths = PlayerData.PVEDeaths.ToString("N0");
+
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Stats_Text", zombieKills);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Stats_Text", megaZombieKills);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_HeadShot_Stats_Text", animalKills);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Accuracy_Stats_Text", resourcesGathered);
+                EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_KD_Stats_Text", pveDeaths);
+            }
+
+            if (configuration.EnableRewards)
             {
                 Reward reward = GetNextReward();
                 if (reward != null)
                 {
-                    string nextReward = pluginInstance.Translate("UI_NextReward", reward.Name);
-                    string progress = pluginInstance.Translate("UI_RewardProgress", PlayerData.Kills.ToString("N0"), reward.Treshold.ToString("N0"));
-                    int progressPercentage = (int)((PlayerData.Kills / (float)reward.Treshold) * 100);
+                    string nextReward;
+                    string progress;
+                    int progressPercentage;
+
+                    if (configuration.PVPRewards)
+                    {
+                        nextReward = pluginInstance.Translate("UI_NextReward", reward.Name);
+                        progress = pluginInstance.Translate("UI_RewardProgress", PlayerData.Kills.ToString("N0"), reward.Treshold.ToString("N0"));
+                        progressPercentage = (int)((PlayerData.Kills / (float)reward.Treshold) * 100);
+                    } else
+                    {
+                        nextReward = pluginInstance.Translate("UI_NextReward", reward.Name);
+                        progress = pluginInstance.Translate("UI_RewardProgressPVE", PlayerData.Zombies.ToString("N0"), reward.Treshold.ToString("N0"));
+                        progressPercentage = (int)((PlayerData.Zombies / (float)reward.Treshold) * 100);
+                    }
 
                     EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Reward_Text", nextReward);
                     EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Progress_Text", progress);
-                                        
+
                     EffectManager.sendUIEffectVisibility(Key, TransportConnection, true, $"PlayerStats_ProgressBar_Fill_{prevPercentageProgress}", false);
                     EffectManager.sendUIEffectVisibility(Key, TransportConnection, true, $"PlayerStats_ProgressBar_Fill_{progressPercentage}", true);
                     prevPercentageProgress = progressPercentage;
-
-                } else
+                }
+                else
                 {
                     EffectManager.sendUIEffectVisibility(Key, TransportConnection, true, "PlayerStats_ProgressBar", false);
                 }
             }
+        }
+
+        public void UpdateUIEffectRank(PlayerRanking playerRanking)
+        {
+            if (!isOpen)
+            {
+                return;
+            }
+
+            string rankString;
+            if (playerRanking.IsUnranked())
+            {
+                rankString = "-";
+            }
+            else
+            {
+                rankString = "#" + playerRanking.Rank.ToString("N0");
+            }
+            EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Rank_Stats_Text", rankString);
         }
 
         public void ShowUIEffect()

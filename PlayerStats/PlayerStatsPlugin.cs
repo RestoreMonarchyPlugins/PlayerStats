@@ -148,6 +148,13 @@ namespace RestoreMonarchy.PlayerStats
             { "UI_KDR", "K/D" },
             { "UI_Footer", "Use /statsui to hide" },
 
+            { "UI_RewardProgressPVE", "{0}/{1} Zombies" },
+            { "UI_ZombieKills", "ZOMBIES" },
+            { "UI_MegaZombieKills", "MEGAS" },
+            { "UI_AnimalKills", "ANIMALS" },
+            { "UI_ResourcesGathered", "GATHERS" },
+            { "UI_PVEDeaths", "DEATHS" }
+
         };
 
         internal string FormatTimespan(TimeSpan span)
