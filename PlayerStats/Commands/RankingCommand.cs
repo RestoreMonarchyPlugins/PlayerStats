@@ -9,6 +9,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
     public class RankingCommand : IRocketCommand
     {
         private PlayerStatsPlugin pluginInstance => PlayerStatsPlugin.Instance;
+        private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
@@ -30,7 +31,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                         return;
                     }
 
-                    if (pluginInstance.Configuration.Instance.PVPRanking)
+                    if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
                     {
                         pluginInstance.SendMessageToPlayer(caller, "RankingListHeaderPVP", amount);
                         foreach (PlayerRanking playerRanking in playerRankings)

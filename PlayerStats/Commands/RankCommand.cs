@@ -16,6 +16,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
     public class RankCommand : IRocketCommand
     {
         private PlayerStatsPlugin pluginInstance => PlayerStatsPlugin.Instance;
+        private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
@@ -71,7 +72,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
 
                     string rank = playerRanking.Rank.ToString();
                     int minTreshold = pluginInstance.Configuration.Instance.MinimumRankingTreshold;
-                    if (pluginInstance.Configuration.Instance.PVPRanking)
+                    if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
                     {
                         string kills = playerRanking.Kills.ToString("N0");                      
                         if (caller.Id == playerRanking.SteamId.ToString())

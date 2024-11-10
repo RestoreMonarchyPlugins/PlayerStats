@@ -30,6 +30,11 @@ namespace RestoreMonarchy.PlayerStats
             Instance = this;
             MessageColor = UnturnedChat.GetColorFromName(Configuration.Instance.MessageColor, UnityEngine.Color.green);
 
+            if (Configuration.Instance.StatsMode == null)
+            {
+                MigrateToNewFormat();
+            }
+
             if (Configuration.Instance.DatabaseProvider.Equals("mysql", StringComparison.OrdinalIgnoreCase))
             {
                 Database = new MySQLDatabase();
@@ -59,6 +64,21 @@ namespace RestoreMonarchy.PlayerStats
 
             Logger.Log($"{Name} {Assembly.GetName().Version.ToString(3)} has been loaded!", ConsoleColor.Yellow);
             Logger.Log($"Check out more Unturned plugins at restoremonarchy.com");
+        }
+
+        public void MigrateToNewFormat()
+        {
+            // Convert legacy settings to new StatsMode
+            Configuration.Instance.StatsMode = Configuration.Instance.ActualStatsMode;
+
+            // Clean up legacy settings
+            Configuration.Instance.EnablePVPStats = true;
+            Configuration.Instance.EnablePVEStats = true;
+            Configuration.Instance.PVPRanking = true;
+            Configuration.Instance.PVPRewards = Configuration.Instance.EnableRewards;
+            Configuration.Instance.PVPUI = true;
+
+            Configuration.Save();
         }
 
         protected override void Unload()

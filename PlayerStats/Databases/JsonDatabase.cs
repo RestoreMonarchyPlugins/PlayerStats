@@ -18,7 +18,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
         {
             if (orderBy == null)
             {
-                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+                orderBy = (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP) ? "Kills" : "Zombies";
             }
 
             List<PlayerRanking> rankings = new();
@@ -56,7 +56,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
 
             if (orderBy == null)
             {
-                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+                orderBy = (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP) ? "Kills" : "Zombies";
             }
 
             PlayerRanking ranking = new();

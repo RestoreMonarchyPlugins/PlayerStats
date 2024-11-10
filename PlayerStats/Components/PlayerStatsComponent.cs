@@ -26,7 +26,7 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         private Reward GetCurrentReward() 
         { 
-            if (configuration.PVPRewards)
+            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
             {
                 return configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
             } else
@@ -37,7 +37,7 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         private Reward GetNextReward()
         {
-            if (configuration.PVPRewards)
+            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
             {
                 return configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Kills);
             }
@@ -99,6 +99,32 @@ namespace RestoreMonarchy.PlayerStats.Components
                         if (configuration.EnableUIEffect && enabled)
                         {
                             SendUIEffect();
+                        }
+                    }
+
+                    // Give rewards if he doesn't have them
+                    UnturnedPlayer unturnedPlayer = UnturnedPlayer.FromPlayer(Player);
+                    List<RocketPermissionsGroup> groups = R.Permissions.GetGroups(unturnedPlayer, true);
+                    foreach (Reward reward in configuration.Rewards)
+                    {
+                        if (groups.Exists(x => x.Id.Equals(reward.PermissionGroup, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            continue;
+                        }
+
+                        if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+                        {
+                            if (reward.Treshold <= PlayerData.Kills)
+                            {
+                                R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
+                            }
+                        }
+                        else
+                        {
+                            if (reward.Treshold <= PlayerData.Zombies)
+                            {
+                                R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
+                            }
                         }
                     }
                 });
@@ -181,7 +207,7 @@ namespace RestoreMonarchy.PlayerStats.Components
             {
                 PlayerData.PVEDeaths++;
                 SessionPlayerData.PVEDeaths++;
-                if (!configuration.PVPUI)
+                if (configuration.StatsMode == StatsMode.PVE)
                 {
                     UpdateUIEffect();
                 }
@@ -200,11 +226,11 @@ namespace RestoreMonarchy.PlayerStats.Components
             {
                 UnturnedPlayer unturnedPlayer = UnturnedPlayer.FromPlayer(Player);
                 List<RocketPermissionsGroup> groups = R.Permissions.GetGroups(unturnedPlayer, false);
-                if (!groups.Exists(x => x.Id.Equals(reward.PermissionGroup, System.StringComparison.OrdinalIgnoreCase)))
+                if (!groups.Exists(x => x.Id.Equals(reward.PermissionGroup, StringComparison.OrdinalIgnoreCase)))
                 {
                     R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
                     string treshold = reward.Treshold.ToString("N0");
-                    if (configuration.PVPRewards)
+                    if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
                     {
                         pluginInstance.SendMessageToPlayer(unturnedPlayer, "RewardReceivedPVP", reward.Name, treshold);
                     } else
@@ -231,7 +257,6 @@ namespace RestoreMonarchy.PlayerStats.Components
                 case EPlayerStat.KILLS_ZOMBIES_MEGA:
                     PlayerData.MegaZombies++;
                     SessionPlayerData.MegaZombies++;
-                    CheckGiveReward();
                     break;
                 case EPlayerStat.FOUND_RESOURCES:
                     PlayerData.Resources++;
@@ -247,7 +272,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                     break;
             }
 
-            if (!configuration.PVPUI)
+            if (configuration.StatsMode == StatsMode.PVE)
             {
                 UpdateUIEffect();
             }

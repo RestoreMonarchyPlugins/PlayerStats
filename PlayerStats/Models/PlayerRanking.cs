@@ -11,13 +11,15 @@
 
         public bool IsUnranked()
         {
-            if (PlayerStatsPlugin.Instance.Configuration.Instance.PVPRanking)
+            PlayerStatsConfiguration configuration = PlayerStatsPlugin.Instance.Configuration.Instance;
+
+            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
             {
-                return Kills < PlayerStatsPlugin.Instance.Configuration.Instance.MinimumRankingTreshold;
+                return Kills < configuration.MinimumRankingTreshold;
             }
             else
             {
-                return Zombies < PlayerStatsPlugin.Instance.Configuration.Instance.MinimumRankingTreshold;
+                return Zombies < configuration.MinimumRankingTreshold;
             }
         }
     }

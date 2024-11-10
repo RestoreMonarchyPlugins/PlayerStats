@@ -20,7 +20,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
         {
             if (orderBy == null)
             {
-                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+                orderBy = (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP) ? "Kills" : "Zombies";
             }
             
             string query = FormatSql($@"
@@ -44,7 +44,7 @@ namespace RestoreMonarchy.PlayerStats.Databases
         {
             if (orderBy == null)
             {
-                orderBy = configuration.PVPRanking ? "Kills" : "Zombies";
+                orderBy = (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP) ? "Kills" : "Zombies";
             }
 
             string query = FormatSql($@"

@@ -23,7 +23,7 @@ namespace RestoreMonarchy.PlayerStats.Components
             EffectManager.sendUIEffect(configuration.UIEffectId, Key, TransportConnection, true);
 
             // Use different translations based on UI mode
-            if (configuration.PVPUI)
+            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
             {
                 EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Text", pluginInstance.Translate("UI_Kills"));
                 EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Text", pluginInstance.Translate("UI_Deaths"));
@@ -67,7 +67,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                 return;
             }
 
-            if (configuration.PVPUI)
+            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
             {
                 // PVP Stats
                 string kills = PlayerData.Kills.ToString("N0");
@@ -107,7 +107,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                     string progress;
                     int progressPercentage;
 
-                    if (configuration.PVPRewards)
+                    if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
                     {
                         nextReward = pluginInstance.Translate("UI_NextReward", reward.Name);
                         progress = pluginInstance.Translate("UI_RewardProgress", PlayerData.Kills.ToString("N0"), reward.Treshold.ToString("N0"));

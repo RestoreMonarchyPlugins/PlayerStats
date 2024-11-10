@@ -1,4 +1,5 @@
 ﻿using RestoreMonarchy.PlayerStats.Helpers;
+using RestoreMonarchy.PlayerStats.Models;
 using Rocket.API;
 using System.Collections.Generic;
 
@@ -7,6 +8,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
     public class StatsCommand : IRocketCommand
     {
         private PlayerStatsPlugin pluginInstance => PlayerStatsPlugin.Instance;
+        private PlayerStatsConfiguration configuration => pluginInstance.Configuration.Instance;
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
@@ -18,7 +20,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
 
             CommandHelper.GetPlayerData(caller, command, (playerData) =>
             {
-                if (pluginInstance.Configuration.Instance.EnablePVPStats)
+                if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
                 {
                     string kills = playerData.Kills.ToString("N0");
                     string deaths = playerData.PVPDeaths.ToString("N0");
@@ -34,7 +36,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                     }                    
                 }
 
-                if (pluginInstance.Configuration.Instance.EnablePVEStats)
+                if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVE)
                 {
                     string zombies = playerData.Zombies.ToString("N0");
                     string megaZombies = playerData.MegaZombies.ToString("N0");
