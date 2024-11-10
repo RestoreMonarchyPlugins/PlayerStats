@@ -20,7 +20,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
 
             CommandHelper.GetPlayerData(caller, command, (playerData) =>
             {
-                if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+                if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
                 {
                     string kills = playerData.Kills.ToString("N0");
                     string deaths = playerData.PVPDeaths.ToString("N0");
@@ -30,13 +30,14 @@ namespace RestoreMonarchy.PlayerStats.Commands
                     if (caller.Id == playerData.SteamId.ToString())
                     {
                         pluginInstance.SendMessageToPlayer(caller, "YourPVPStats", kills, deaths, kdr, hsPercentage);
-                    } else
+                    }
+                    else
                     {
                         pluginInstance.SendMessageToPlayer(caller, "OtherPVPStats", playerData.Name, kills, deaths, kdr, hsPercentage);
-                    }                    
+                    }
                 }
 
-                if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVE)
+                if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVE)
                 {
                     string zombies = playerData.Zombies.ToString("N0");
                     string megaZombies = playerData.MegaZombies.ToString("N0");

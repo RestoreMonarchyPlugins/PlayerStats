@@ -72,28 +72,31 @@ namespace RestoreMonarchy.PlayerStats.Commands
 
                     string rank = playerRanking.Rank.ToString();
                     int minTreshold = pluginInstance.Configuration.Instance.MinimumRankingTreshold;
-                    if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+                    if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
                     {
-                        string kills = playerRanking.Kills.ToString("N0");                      
+                        string kills = playerRanking.Kills.ToString("N0");
                         if (caller.Id == playerRanking.SteamId.ToString())
                         {
                             if (playerRanking.IsUnranked())
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "YouAreUnrankedPVP", kills, minTreshold);
-                            } else
+                            }
+                            else
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "YourPlayerPVPRanking", rank, kills);
-                            }                            
-                        } else
+                            }
+                        }
+                        else
                         {
                             if (playerRanking.IsUnranked())
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "OtherPlayerIsUnrankedPVP", playerRanking.Name, kills, minTreshold);
-                            } else
+                            }
+                            else
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "OtherPlayerPVPRanking", playerRanking.Name, rank, kills);
                             }
-                        }                        
+                        }
                     }
                     else
                     {
@@ -103,16 +106,19 @@ namespace RestoreMonarchy.PlayerStats.Commands
                             if (playerRanking.IsUnranked())
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "YouAreUnrankedPVE", zombies, minTreshold);
-                            } else
+                            }
+                            else
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "YourPlayerPVERanking", rank, zombies);
-                            }                            
-                        } else
+                            }
+                        }
+                        else
                         {
                             if (playerRanking.IsUnranked())
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "OtherPlayerIsUnrankedPVE", playerRanking.Name, zombies, minTreshold);
-                            } else
+                            }
+                            else
                             {
                                 pluginInstance.SendMessageToPlayer(caller, "OtherPlayerPVERanking", playerRanking.Name, rank, zombies);
                             }

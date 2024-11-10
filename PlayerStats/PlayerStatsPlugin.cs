@@ -69,7 +69,8 @@ namespace RestoreMonarchy.PlayerStats
         public void MigrateToNewFormat()
         {
             // Convert legacy settings to new StatsMode
-            Configuration.Instance.StatsMode = Configuration.Instance.ActualStatsMode;
+            Configuration.Instance.StatsMode = Configuration.Instance.ActualStatsMode.ToString();
+            Configuration.Instance.actualStatsMode = null;
 
             // Clean up legacy settings
             Configuration.Instance.EnablePVPStats = true;
@@ -130,6 +131,7 @@ namespace RestoreMonarchy.PlayerStats
             { "YouAreUnrankedPVE", "You are unranked because you have [[b]]{0}/{1}[[/b]] zombie kills. " },
             { "OtherPlayerIsUnrankedPVE", "[[b]]{0}[[/b]] is unranked because they have [[b]]{1}/{2}[[/b]] zombie kills." },
             { "NoRankingPlayersFound", "There isn't any players qualified for ranking yet." },
+            { "StatsUIEffectDisabled", "Stats UI is not enabled on this server." },
             { "StatsUIDisabled", "Stats UI has been disabled" },
             { "StatsUIEnabled", "Stats UI has been enabled" },
             { "RewardReceivedPVP", "You received [[b]]{0}[[/b]] reward for {1} kills." },
@@ -194,7 +196,12 @@ namespace RestoreMonarchy.PlayerStats
             return string.Join(" ", items);
         }
 
-        private void Save(bool async = true)
+        private void Save()
+        {
+            Save(true);
+        }
+
+        private void Save(bool async)
         {
             List<PlayerStatsData> playersData = [];
 

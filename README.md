@@ -7,17 +7,24 @@ Player PVP and PVE stats with ranking, rewards and UI.
 * Supports PVP (Kills) and PVE (Zombie Kills) ranking
 * Permission group rewards for reaching a certain number of kills
 * Automatic migration from Arechi PlayerStats plugin
-* UI for PVP stats
+* UI for PVP/PVE stats
 
 **PVP Stats:** Kills, Deaths, KDR, HS%  
 **PVE Stats:** Zombies, Mega Zombies, Animals, Resources, Harvests, Fish
 
+**`<StatsMode>Both</StatsMode>` configuration options:**
+* `Both` - The `/stats` command will display both PVP and PVE stats, but the ranking, rewards and UI will be based on PVP stats
+* `PVP` - The `/stats` command will display only PVP stats, and the ranking, rewards and UI will be based on PVP stats
+* `PVE` - The `/stats` command will display only PVE stats, and the ranking, rewards and UI will be based on PVE stats
+
 ## Credits
-UI made by **Soer (Unbeaten)**. He also sponsored the creation of this plugin.
+UI made by **💪 Soer (Unbeaten)**. He also sponsored the creation of this plugin 💸.
 
 ## Workshop (optional)
 The UI is optional and only for PVP stats. You can use the following workshop item to display the stats in-game.  
-[Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593) - `3352126593`
+[Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593) - `3352126593`  
+> **💡 PRO TIP**  
+> Remember to set `<EnableUIEffect>true</EnableUIEffect>` to **true** in the configuration file to enable the UI.
 
 ## Commands
 * `/playtime [player]` - Displays your or other player's playtime
@@ -54,10 +61,7 @@ The UI is optional and only for PVP stats. You can use the following workshop it
   <UIEffectId>22512</UIEffectId>
   <ShowUIEffectByDefault>true</ShowUIEffectByDefault>
   <EnableJoinLeaveMessages>true</EnableJoinLeaveMessages>
-  <EnablePVPStats>true</EnablePVPStats>
-  <EnablePVEStats>true</EnablePVEStats>
-  <PVPRanking>true</PVPRanking>
-  <PVPRewards>true</PVPRewards>
+  <StatsMode>Both</StatsMode>
   <MinimumRankingTreshold>25</MinimumRankingTreshold>
   <EnableRewards>true</EnableRewards>
   <Rewards>
@@ -95,6 +99,7 @@ The UI is optional and only for PVP stats. You can use the following workshop it
   <Translation Id="YouAreUnrankedPVE" Value="You are unranked because you have [[b]]{0}/{1}[[/b]] zombie kills. " />
   <Translation Id="OtherPlayerIsUnrankedPVE" Value="[[b]]{0}[[/b]] is unranked because they have [[b]]{1}/{2}[[/b]] zombie kills." />
   <Translation Id="NoRankingPlayersFound" Value="There isn't any players qualified for ranking yet." />
+  <Translation Id="StatsUIEffectDisabled" Value="Stats UI is not enabled on this server." />
   <Translation Id="StatsUIDisabled" Value="Stats UI has been disabled" />
   <Translation Id="StatsUIEnabled" Value="Stats UI has been enabled" />
   <Translation Id="RewardReceivedPVP" Value="You received [[b]]{0}[[/b]] reward for {1} kills." />
@@ -129,5 +134,12 @@ The UI is optional and only for PVP stats. You can use the following workshop it
   <Translation Id="UI_Rank" Value="RANK" />
   <Translation Id="UI_KDR" Value="K/D" />
   <Translation Id="UI_Footer" Value="Use /statsui to hide" />
+  <Translation Id="UI_RewardProgressPVE" Value="{0}/{1} Zombies" />
+  <Translation Id="UI_ZombieKills" Value="ZOMBIES" />
+  <Translation Id="UI_MegaZombieKills" Value="MEGAS" />
+  <Translation Id="UI_AnimalKills" Value="ANIMALS" />
+  <Translation Id="UI_ResourcesGathered" Value="GATHERS" />
+  <Translation Id="UI_PVEDeaths" Value="DEATHS" />
+</Translations>
 </Translations>
 ```

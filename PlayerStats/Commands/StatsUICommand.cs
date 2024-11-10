@@ -19,6 +19,12 @@ namespace RestoreMonarchy.PlayerStats.Commands
                 return;
             }
 
+            if (!pluginInstance.Configuration.Instance.EnableUIEffect)
+            {
+                pluginInstance.SendMessageToPlayer(player, "StatsUIEffectDisabled");
+                return;
+            }
+
             bool currentUIState = component.PlayerData.UIDisabled ?? !pluginInstance.Configuration.Instance.ShowUIEffectByDefault;
             component.PlayerData.UIDisabled = !currentUIState;
 

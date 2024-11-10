@@ -13,7 +13,7 @@
         {
             PlayerStatsConfiguration configuration = PlayerStatsPlugin.Instance.Configuration.Instance;
 
-            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+            if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
             {
                 return Kills < configuration.MinimumRankingTreshold;
             }

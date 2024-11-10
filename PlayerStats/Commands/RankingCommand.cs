@@ -31,7 +31,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                         return;
                     }
 
-                    if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+                    if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
                     {
                         pluginInstance.SendMessageToPlayer(caller, "RankingListHeaderPVP", amount);
                         foreach (PlayerRanking playerRanking in playerRankings)
@@ -52,7 +52,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                             string zombies = playerRanking.Zombies.ToString("N0");
                             pluginInstance.SendMessageToPlayer(caller, "RankingListItemPVE", rank, name, zombies);
                         }
-                    }                    
+                    }
                 });
             });
         }

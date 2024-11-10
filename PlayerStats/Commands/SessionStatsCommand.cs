@@ -34,7 +34,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
             }
 
             PlayerStatsData playerData = component.SessionPlayerData;
-            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+            if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
             {
                 string kills = playerData.Kills.ToString("N0");
                 string deaths = playerData.PVPDeaths.ToString("N0");
@@ -51,7 +51,7 @@ namespace RestoreMonarchy.PlayerStats.Commands
                 }
             }
 
-            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVE)
+            if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVE)
             {
                 string zombies = playerData.Zombies.ToString("N0");
                 string megaZombies = playerData.MegaZombies.ToString("N0");

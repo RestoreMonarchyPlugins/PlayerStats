@@ -1,5 +1,6 @@
 ﻿using RestoreMonarchy.PlayerStats.Models;
 using Rocket.API;
+using System;
 
 namespace RestoreMonarchy.PlayerStats
 {
@@ -31,7 +32,7 @@ namespace RestoreMonarchy.PlayerStats
         public bool PVPUI { get; set; }
 
         // New Stats Settings
-        public StatsMode? StatsMode { get; set; }
+        public string StatsMode { get; set; }
 
         // Ranking & Rewards
         public int MinimumRankingTreshold { get; set; }
@@ -39,33 +40,49 @@ namespace RestoreMonarchy.PlayerStats
         public Reward[] Rewards { get; set; }
 
         // Only hide legacy properties when using new StatsMode
-        public bool ShouldSerializeEnablePVPStats() => !StatsMode.HasValue;
-        public bool ShouldSerializeEnablePVEStats() => !StatsMode.HasValue;
-        public bool ShouldSerializePVPRanking() => !StatsMode.HasValue;
-        public bool ShouldSerializePVPRewards() => !StatsMode.HasValue;
-        public bool ShouldSerializePVPUI() => !StatsMode.HasValue;
+        public bool ShouldSerializeEnablePVPStats() => StatsMode == null;
+        public bool ShouldSerializeEnablePVEStats() => StatsMode == null;
+        public bool ShouldSerializePVPRanking() => StatsMode == null;
+        public bool ShouldSerializePVPRewards() => StatsMode == null;
+        public bool ShouldSerializePVPUI() => StatsMode == null;
+
+        internal StatsMode? actualStatsMode;
 
         public StatsMode ActualStatsMode
         {
             get
             {
-                if (StatsMode.HasValue)
-                    return StatsMode.Value;
+                if (actualStatsMode.HasValue)
+                {
+                    return actualStatsMode.Value;
+                }
+                
+                
+                if (!string.IsNullOrEmpty(StatsMode))
+                {
+                    actualStatsMode = (StatsMode)Enum.Parse(typeof(StatsMode), StatsMode, true);
+                } else
+                {
+                    if (!EnablePVPStats && !EnablePVEStats)
+                    {
+                        actualStatsMode = Models.StatsMode.Both;
+                    } else if (EnablePVPStats && !EnablePVEStats)
+                    {
+                        actualStatsMode = Models.StatsMode.PVP;
+                    }
+                    else if (!EnablePVPStats && EnablePVEStats)
+                    {
+                        actualStatsMode = Models.StatsMode.PVE;
+                    }
+                    else
+                    {
+                        actualStatsMode = Models.StatsMode.Both;
+                    }
+                }                
 
-                if (!EnablePVPStats && !EnablePVEStats)
-                    return Models.StatsMode.Both;
-                if (EnablePVPStats && !EnablePVEStats)
-                    return Models.StatsMode.PVP;
-                if (!EnablePVPStats && EnablePVEStats)
-                    return Models.StatsMode.PVE;
-
-                return Models.StatsMode.Both;
+                return actualStatsMode.Value;
             }
         }
-
-        public bool IsRankingEnabled => StatsMode.HasValue ?
-            (ActualStatsMode == Models.StatsMode.PVP || ActualStatsMode == Models.StatsMode.Both) && EnableRewards
-            : PVPRanking && PVPRewards;
 
         public void LoadDefaults()
         {
@@ -92,7 +109,7 @@ namespace RestoreMonarchy.PlayerStats
             PVPUI = true;
 
             // New system defaults to null to use legacy system
-            StatsMode = null;
+            StatsMode = Models.StatsMode.Both.ToString();
 
             MinimumRankingTreshold = 25;
             EnableRewards = true;

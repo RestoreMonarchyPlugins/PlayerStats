@@ -26,7 +26,7 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         private Reward GetCurrentReward() 
         { 
-            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+            if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
             {
                 return configuration.Rewards.OrderByDescending(x => x.Treshold).FirstOrDefault(x => x.Treshold <= PlayerData.Kills);
             } else
@@ -37,7 +37,7 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         private Reward GetNextReward()
         {
-            if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+            if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
             {
                 return configuration.Rewards.OrderBy(x => x.Treshold).FirstOrDefault(x => x.Treshold > PlayerData.Kills);
             }
@@ -70,7 +70,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                     ThreadHelper.RunSynchronously(() =>
                     {
                         Logger.Log($"Failed to load player data for {Name} ({SteamId}): {ex.Message}");
-                    });                    
+                    });
                     playerData = PlayerData;
                 }
 
@@ -112,7 +112,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                             continue;
                         }
 
-                        if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+                        if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
                         {
                             if (reward.Treshold <= PlayerData.Kills)
                             {
@@ -207,7 +207,7 @@ namespace RestoreMonarchy.PlayerStats.Components
             {
                 PlayerData.PVEDeaths++;
                 SessionPlayerData.PVEDeaths++;
-                if (configuration.StatsMode == StatsMode.PVE)
+                if (configuration.ActualStatsMode == StatsMode.PVE)
                 {
                     UpdateUIEffect();
                 }
@@ -230,7 +230,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                 {
                     R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
                     string treshold = reward.Treshold.ToString("N0");
-                    if (configuration.StatsMode == StatsMode.Both || configuration.StatsMode == StatsMode.PVP)
+                    if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
                     {
                         pluginInstance.SendMessageToPlayer(unturnedPlayer, "RewardReceivedPVP", reward.Name, treshold);
                     } else
@@ -272,7 +272,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                     break;
             }
 
-            if (configuration.StatsMode == StatsMode.PVE)
+            if (configuration.ActualStatsMode == StatsMode.PVE)
             {
                 UpdateUIEffect();
             }
