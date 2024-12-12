@@ -1,5 +1,6 @@
 ﻿using RestoreMonarchy.PlayerStats.Helpers;
 using RestoreMonarchy.PlayerStats.Models;
+using Rocket.API;
 using Rocket.API.Serialisation;
 using Rocket.Core;
 using Rocket.Unturned.Player;
@@ -228,7 +229,13 @@ namespace RestoreMonarchy.PlayerStats.Components
                 List<RocketPermissionsGroup> groups = R.Permissions.GetGroups(unturnedPlayer, false);
                 if (!groups.Exists(x => x.Id.Equals(reward.PermissionGroup, StringComparison.OrdinalIgnoreCase)))
                 {
-                    R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
+                    RocketPermissionsProviderResult result = R.Permissions.AddPlayerToGroup(reward.PermissionGroup, unturnedPlayer);
+                    if (result != RocketPermissionsProviderResult.Success)
+                    {
+                        Logger.Log($"Warning >> Failed to give {reward.PermissionGroup} permission group as reward to {unturnedPlayer.DisplayName}. Reason: {result}", ConsoleColor.Yellow);
+                        return;
+                    }
+
                     string treshold = reward.Treshold.ToString("N0");
                     if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
                     {
