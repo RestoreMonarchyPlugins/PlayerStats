@@ -62,6 +62,7 @@ The UI is optional and only for PVP stats. You can use the following workshop it
   <ShowUIEffectByDefault>true</ShowUIEffectByDefault>
   <EnableJoinLeaveMessages>true</EnableJoinLeaveMessages>
   <StatsMode>Both</StatsMode>
+  <ShowCombinedDeaths>true</ShowCombinedDeaths>
   <MinimumRankingTreshold>25</MinimumRankingTreshold>
   <EnableRewards>true</EnableRewards>
   <Rewards>

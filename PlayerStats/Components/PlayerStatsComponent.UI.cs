@@ -71,10 +71,10 @@ namespace RestoreMonarchy.PlayerStats.Components
             {
                 // PVP Stats
                 string kills = PlayerData.Kills.ToString("N0");
-                string deaths = PlayerData.PVPDeaths.ToString("N0");
+                string deaths = PlayerData.Deaths.ToString("N0");
                 string headshots = PlayerData.Headshots.ToString("N0");
                 string hsPercentage = (PlayerData.Kills == 0 ? "0" : (((decimal)PlayerData.Headshots / PlayerData.Kills) * 100).ToString("N0")) + "%";
-                string kdr = PlayerData.PVPDeaths == 0 ? PlayerData.Kills.ToString("N2") : ((decimal)PlayerData.Kills / PlayerData.PVPDeaths).ToString("N2");
+                string kdr = PlayerData.Deaths == 0 ? PlayerData.Kills.ToString("N2") : ((decimal)PlayerData.Kills / PlayerData.Deaths).ToString("N2");
 
                 EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Stats_Text", kills);
                 EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Stats_Text", deaths);
@@ -89,7 +89,7 @@ namespace RestoreMonarchy.PlayerStats.Components
                 string megaZombieKills = PlayerData.MegaZombies.ToString("N0");
                 string animalKills = PlayerData.Animals.ToString("N0");
                 string resourcesGathered = PlayerData.Resources.ToString("N0");
-                string pveDeaths = PlayerData.PVEDeaths.ToString("N0");
+                string pveDeaths = PlayerData.Deaths.ToString("N0");
 
                 EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Kills_Stats_Text", zombieKills);
                 EffectManager.sendUIEffectText(Key, TransportConnection, true, "PlayerStats_Stats_Deaths_Stats_Text", megaZombieKills);

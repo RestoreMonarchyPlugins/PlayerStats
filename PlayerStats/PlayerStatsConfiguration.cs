@@ -33,6 +33,7 @@ namespace RestoreMonarchy.PlayerStats
 
         // New Stats Settings
         public string StatsMode { get; set; }
+        public bool ShowCombinedDeaths { get; set; } = false;
 
         // Ranking & Rewards
         public int MinimumRankingTreshold { get; set; }
@@ -110,6 +111,7 @@ namespace RestoreMonarchy.PlayerStats
 
             // New system defaults to null to use legacy system
             StatsMode = Models.StatsMode.Both.ToString();
+            ShowCombinedDeaths = true;
 
             MinimumRankingTreshold = 25;
             EnableRewards = true;

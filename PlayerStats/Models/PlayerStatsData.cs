@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace RestoreMonarchy.PlayerStats.Models
 {
@@ -21,5 +22,21 @@ namespace RestoreMonarchy.PlayerStats.Models
         public ulong Playtime  { get; set; }
         public bool? UIDisabled { get; set; }
         public DateTime LastUpdated { get; set; }
+
+        [JsonIgnore]
+        public int Deaths
+        {
+            get
+            {
+                if (PlayerStatsPlugin.Instance.Configuration.Instance.ShowCombinedDeaths)
+                {
+                    return PVPDeaths + PVEDeaths;
+                }
+                else
+                {
+                    return PlayerStatsPlugin.Instance.Configuration.Instance.ActualStatsMode == StatsMode.Both || PlayerStatsPlugin.Instance.Configuration.Instance.ActualStatsMode == StatsMode.PVP ? PVPDeaths : PVEDeaths;
+                }
+            }
+        }
     }
 }

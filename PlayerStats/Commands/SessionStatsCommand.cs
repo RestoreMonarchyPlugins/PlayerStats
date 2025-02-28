@@ -37,8 +37,8 @@ namespace RestoreMonarchy.PlayerStats.Commands
             if (configuration.ActualStatsMode == StatsMode.Both || configuration.ActualStatsMode == StatsMode.PVP)
             {
                 string kills = playerData.Kills.ToString("N0");
-                string deaths = playerData.PVPDeaths.ToString("N0");
-                string kdr = deaths == "0" ? kills : (playerData.Kills / playerData.PVPDeaths).ToString("N2");
+                string deaths = playerData.Deaths.ToString("N0");
+                string kdr = deaths == "0" ? kills : (playerData.Kills / playerData.Deaths).ToString("N2");
                 string hsPercentage = (playerData.Kills == 0 ? "0" : (((decimal)playerData.Headshots / playerData.Kills) * 100).ToString("N0")) + "%";
 
                 if (caller.Id == playerData.SteamId.ToString())
