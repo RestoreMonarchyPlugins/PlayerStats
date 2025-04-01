@@ -208,7 +208,7 @@ namespace RestoreMonarchy.PlayerStats.Components
             {
                 PlayerData.PVEDeaths++;
                 SessionPlayerData.PVEDeaths++;
-                if (configuration.ActualStatsMode == StatsMode.PVE)
+                if (configuration.ActualStatsMode == StatsMode.PVE || configuration.ShowCombinedDeaths)
                 {
                     UpdateUIEffect();
                 }
