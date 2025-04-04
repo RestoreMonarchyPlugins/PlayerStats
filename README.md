@@ -1,41 +1,78 @@
 # Player Stats
-Player PVP and PVE stats with ranking, rewards and UI.
+> Track and display player PVP and PVE statistics with ranking, rewards and UI
 
-## Features
-* Stores player stats in a JSON file or MySQL database
-* Displays player stats, playtime, ranking, and session stats using commands
-* Supports PVP (Kills) and PVE (Zombie Kills) ranking
-* Permission group rewards for reaching a certain number of kills
-* Automatic migration from Arechi PlayerStats plugin
-* UI for PVP/PVE stats
+---
 
-**PVP Stats:** Kills, Deaths, KDR, HS%  
-**PVE Stats:** Zombies, Mega Zombies, Animals, Resources, Harvests, Fish
+## 📊 Overview
+Player Stats is a plugin that tracks various player statistics and provides ranking for both PVP and PVE gameplay. The plugin supports permission-based rewards and includes an optional visual UI.
 
-**`<StatsMode>Both</StatsMode>` configuration options:**
-* `Both` - The `/stats` command will display both PVP and PVE stats, but the ranking, rewards and UI will be based on PVP stats
-* `PVP` - The `/stats` command will display only PVP stats, and the ranking, rewards and UI will be based on PVP stats
-* `PVE` - The `/stats` command will display only PVE stats, and the ranking, rewards and UI will be based on PVE stats
+## ✨ Features
+| Feature | Description |
+|---------|-------------|
+| 💾 Data Storage | Store player stats in a JSON file or MySQL database |
+| 📈 Stats Display | Show player stats, playtime, ranking, and session stats via commands |
+| 🏆 Rankings | Support for both PVP (Kills) and PVE (Zombie Kills) leaderboards |
+| 🎁 Rewards | Permission group rewards for reaching specific kill thresholds |
+| 🔄 Migration | Automatic migration from Arechi PlayerStats plugin |
+| 🖥️ User Interface | Optional UI for viewing PVP/PVE stats |
 
-## Credits
-UI made by **💪 Soer (Unbeaten)**. He also sponsored the creation of this plugin 💸.
+## 📊 Tracked Statistics
 
-## Workshop (optional)
-The UI is optional and only for PVP stats. You can use the following workshop item to display the stats in-game.  
-[Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593) - `3352126593`  
-> **💡 PRO TIP**  
-> Remember to set `<EnableUIEffect>true</EnableUIEffect>` to **true** in the configuration file to enable the UI.
+### PVP Stats
+- Kills
+- Deaths
+- KDR (Kill/Death Ratio)
+- HS% (Headshot Percentage)
 
-## Commands
-* `/playtime [player]` - Displays your or other player's playtime
-* `/stats [player]` - Displays your or other player's stats
-* `/rank [player]` - Displays your or other player's ranking
-* `/sstats [player]` - Displays your or other player's session stats (since they joined)
-* `/splaytime [player]` - Displays your or other player's session playtime (since they joined)
-* `/ranking` - Displays the top players ranking
-* `/statsui` - Toggles the stats UI
+### PVE Stats
+- Zombies
+- Mega Zombies
+- Animals
+- Resources
+- Harvests
+- Fish
 
-## Permissions
+---
+
+## 🔧 Configuration Options
+
+### Stats Mode (`<StatsMode>Both</StatsMode>`)
+
+| Mode | Description |
+|------|-------------|
+| `Both` | The `/stats` command displays both PVP and PVE stats, but ranking, rewards and UI are based on PVP stats |
+| `PVP` | The `/stats` command displays only PVP stats, and ranking, rewards and UI are based on PVP stats |
+| `PVE` | The `/stats` command displays only PVE stats, and ranking, rewards and UI are based on PVE stats |
+
+---
+
+## 🖥️ Workshop Integration (Optional)
+The UI is optional and provides a visual display for PVP stats. 
+
+- **Workshop Item**: [Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593)
+- **ID**: `3352126593`
+
+> 💡 **PRO TIP**  
+> Remember to set `<EnableUIEffect>true</EnableUIEffect>` in the configuration file to activate the UI.
+
+---
+
+## 🔑 Commands
+
+| Command | Description |
+|---------|-------------|
+| `/playtime [player]` | Shows your or another player's total playtime |
+| `/stats [player]` | Displays your or another player's stats |
+| `/rank [player]` | Shows your or another player's ranking |
+| `/sstats [player]` | Displays your or another player's session stats (since they joined) |
+| `/splaytime [player]` | Shows your or another player's session playtime (since they joined) |
+| `/ranking` | Displays the top players ranking |
+| `/statsui` | Toggles the stats UI on/off |
+
+---
+
+## 🔐 Permissions
+
 ```xml
 <Permission Cooldown="0">playtime</Permission>
 <Permission Cooldown="0">stats</Permission>
@@ -46,7 +83,9 @@ The UI is optional and only for PVP stats. You can use the following workshop it
 <Permission Cooldown="0">statsui</Permission>
 ```
 
-## Configuration
+---
+
+## ⚙️ Configuration
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <PlayerStatsConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -72,75 +111,24 @@ The UI is optional and only for PVP stats. You can use the following workshop it
 </PlayerStatsConfiguration>
 ```
 
-## Translations
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<Translations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Translation Id="StatsCommandSyntax" Value="You must specify player name or steamID." />
-  <Translation Id="PlayerStatsNotLoaded" Value="Player stats are not loaded for [[b]]{0}.[[/b]] Please try again later." />
-  <Translation Id="PlayerNotFound" Value="Player [[b]]{0}[[/b]] not found." />
-  <Translation Id="YourPVPStats" Value="[[b]]Your[[/b]] PVP stats | Kills: [[b]]{0}[[/b]], Deaths: [[b]]{1}[[/b]], KDR: [[b]]{2}[[/b]], HS%: [[b]]{3}[[/b]]" />
-  <Translation Id="YourPVEStats" Value="[[b]]Your[[/b]] PVE stats | Zombies: [[b]]{0}[[/b]], Mega Zombies: [[b]]{1}[[/b]], Animals: [[b]]{2}[[/b]], Resources: [[b]]{3}[[/b]], Harvests: [[b]]{4}[[/b]], Fish: [[b]]{5}[[/b]]" />
-  <Translation Id="OtherPVPStats" Value="[[b]]{0}[[/b]] PVP stats | Kills: [[b]]{1}[[/b]], Deaths: [[b]]{2}[[/b]], KDR: [[b]]{3}[[/b]], HS%: [[b]]{4}[[/b]]" />
-  <Translation Id="OtherPVEStats" Value="[[b]]{0}[[/b]] PVE stats | Zombies: [[b]]{1}[[/b]], Mega Zombies: [[b]]{2}[[/b]], Animals: [[b]]{3}[[/b]], Resources: [[b]]{4}[[/b]], Harvests: [[b]]{5}[[/b]], Fish: [[b]]{6}[[/b]]" />
-  <Translation Id="PlaytimeCommandSyntax" Value="You must specify player name or steamID." />
-  <Translation Id="YourPlaytime" Value="You have played for [[b]]{0}[[/b]]" />
-  <Translation Id="OtherPlaytime" Value="[[b]]{0}[[/b]] has played for [[b]]{1}[[/b]]" />
-  <Translation Id="RankCommandSyntax" Value="You must specify player name or steamID." />
-  <Translation Id="YourPlayerPVPRanking" Value="Your rank is [[b]]#{0}[[/b]] with {1} kills" />
-  <Translation Id="OtherPlayerPVPRanking" Value="[[b]]{0}[[/b]] rank is [[b]]#{1}[[/b]] with {2} kills." />
-  <Translation Id="YourPlayerPVERanking" Value="Your rank is [[b]]#{0}[[/b]] with {1} zombie kills." />
-  <Translation Id="OtherPlayerPVERanking" Value="[[b]]{0}[[/b]] rank is [[b]]#{1}[[/b]] with {2} zombie kills." />
-  <Translation Id="RankingListHeaderPVP" Value="[[b]]Top {0} Players by Kills[[/b]]" />
-  <Translation Id="RankingListItemPVP" Value="[[b]]#{0}[[/b]] [[b]]{1}[[/b]] - {2} kills" />
-  <Translation Id="RankingListHeaderPVE" Value="[[b]]Top {0} Players by Zombie Kills[[/b]]" />
-  <Translation Id="RankingListItemPVE" Value="[[b]]#{0}[[/b]] [[b]]{1}[[/b]] - {2} zombie kills" />
-  <Translation Id="YouAreUnrankedPVP" Value="You are unranked because you have [[b]]{0}/{1}[[/b]] kills. " />
-  <Translation Id="OtherPlayerIsUnrankedPVP" Value="[[b]]{0}[[/b]] is unranked because they have [[b]]{1}/{2}[[/b]] kills." />
-  <Translation Id="YouAreUnrankedPVE" Value="You are unranked because you have [[b]]{0}/{1}[[/b]] zombie kills. " />
-  <Translation Id="OtherPlayerIsUnrankedPVE" Value="[[b]]{0}[[/b]] is unranked because they have [[b]]{1}/{2}[[/b]] zombie kills." />
-  <Translation Id="NoRankingPlayersFound" Value="There isn't any players qualified for ranking yet." />
-  <Translation Id="StatsUIEffectDisabled" Value="Stats UI is not enabled on this server." />
-  <Translation Id="StatsUIDisabled" Value="Stats UI has been disabled" />
-  <Translation Id="StatsUIEnabled" Value="Stats UI has been enabled" />
-  <Translation Id="RewardReceivedPVP" Value="You received [[b]]{0}[[/b]] reward for {1} kills." />
-  <Translation Id="RewardReceivedPVE" Value="You received [[b]]{0}[[/b]] reward for {1} zombie kills." />
-  <Translation Id="YourPVPSessionStats" Value="[[b]]Your[[/b]] PVP session stats | Kills: [[b]]{0}[[/b]], Deaths: [[b]]{1}[[/b]], KDR: [[b]]{2}[[/b]], HS%: [[b]]{3}[[/b]]" />
-  <Translation Id="OtherPVPSessionStats" Value="[[b]]{0}[[/b]] PVP session stats | Kills: [[b]]{1}[[/b]], Deaths: [[b]]{2}[[/b]], KDR: [[b]]{3}[[/b]], HS%: [[b]]{4}[[/b]]" />
-  <Translation Id="YourPVESessionStats" Value="[[b]]Your[[/b]] PVE session stats | Zombies: [[b]]{0}[[/b]], Mega Zombies: [[b]]{1}[[/b]], Animals: [[b]]{2}[[/b]], Resources: [[b]]{3}[[/b]], Harvests: [[b]]{4}[[/b]], Fish: [[b]]{5}[[/b]]" />
-  <Translation Id="OtherPVESessionStats" Value="[[b]]{0}[[/b]] PVE session stats | Zombies: [[b]]{1}[[/b]], Mega Zombies: [[b]]{2}[[/b]], Animals: [[b]]{3}[[/b]], Resources: [[b]]{4}[[/b]], Harvests: [[b]]{5}[[/b]], Fish: [[b]]{6}[[/b]]" />
-  <Translation Id="SessionStatsCommandSyntax" Value="You must specify player name or steamID." />
-  <Translation Id="SessionPlaytimeCommandSyntax" Value="You must specify player name or steamID." />
-  <Translation Id="YourSessionPlaytime" Value="You have played for [[b]]{0}[[/b]] since you joined." />
-  <Translation Id="OtherSessionPlaytime" Value="[[b]]{0}[[/b]] has played for [[b]]{1}[[/b]] since they joined." />
-  <Translation Id="JoinMessage" Value="[[b]][#{0}] {1}[[/b]] joined the server." />
-  <Translation Id="LeaveMessage" Value="[[b]][#{0}] {1}[[/b]] left the server." />
-  <Translation Id="JoinMessageNoRank" Value="[[b]]{0}[[/b]] joined the server." />
-  <Translation Id="LeaveMessageNoRank" Value="[[b]]{0}[[/b]] left the server." />
-  <Translation Id="Day" Value="1 day" />
-  <Translation Id="Days" Value="{0} days" />
-  <Translation Id="Hour" Value="1 hour" />
-  <Translation Id="Hours" Value="{0} hours" />
-  <Translation Id="Minute" Value="1 minute" />
-  <Translation Id="Minutes" Value="{0} minutes" />
-  <Translation Id="Second" Value="1 second" />
-  <Translation Id="Seconds" Value="{0} seconds" />
-  <Translation Id="Zero" Value="a moment" />
-  <Translation Id="UI_NextReward" Value="Next Reward: {0}" />
-  <Translation Id="UI_RewardProgress" Value="{0}/{1} Kills" />
-  <Translation Id="UI_Kills" Value="KILLS" />
-  <Translation Id="UI_Deaths" Value="DEATHS" />
-  <Translation Id="UI_Headshots" Value="HS" />
-  <Translation Id="UI_Accuracy" Value="HS%" />
-  <Translation Id="UI_Rank" Value="RANK" />
-  <Translation Id="UI_KDR" Value="K/D" />
-  <Translation Id="UI_Footer" Value="Use /statsui to hide" />
-  <Translation Id="UI_RewardProgressPVE" Value="{0}/{1} Zombies" />
-  <Translation Id="UI_ZombieKills" Value="ZOMBIES" />
-  <Translation Id="UI_MegaZombieKills" Value="MEGAS" />
-  <Translation Id="UI_AnimalKills" Value="ANIMALS" />
-  <Translation Id="UI_ResourcesGathered" Value="GATHERS" />
-  <Translation Id="UI_PVEDeaths" Value="DEATHS" />
-</Translations>
-</Translations>
-```
+---
+
+## 👨‍💻 Credits
+UI made by **💪 Soer (Unbeaten)**. He also sponsored the creation of this plugin 💸.
+
+---
+
+## ❓ Frequently Asked Questions
+
+1. **How do I enable the UI?**  
+   Set `<EnableUIEffect>true</EnableUIEffect>` in the configuration and subscribe to the workshop item.
+
+2. **Can I use MySQL instead of JSON?**  
+   Yes, change `<DatabaseProvider>json</DatabaseProvider>` to `<DatabaseProvider>mysql</DatabaseProvider>` and configure your connection string.
+
+3. **How do I customize rewards?**  
+   Edit the `<Rewards>` section in the configuration file with your desired thresholds and permission groups.
+
+---
+
+*For support, bug reports, or feature requests, please write on our forum or join our Discord.*
