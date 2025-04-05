@@ -3,10 +3,10 @@
 
 ---
 
-## 📊 Overview
+## Overview
 Player Stats is a plugin that tracks various player statistics and provides ranking for both PVP and PVE gameplay. The plugin supports permission-based rewards and includes an optional visual UI.
 
-## ✨ Features
+## Features
 | Feature | Description |
 |---------|-------------|
 | 💾 Data Storage | Store player stats in a JSON file or MySQL database |
@@ -16,7 +16,7 @@ Player Stats is a plugin that tracks various player statistics and provides rank
 | 🔄 Migration | Automatic migration from Arechi PlayerStats plugin |
 | 🖥️ User Interface | Optional UI for viewing PVP/PVE stats |
 
-## 📊 Tracked Statistics
+## Tracked Statistics
 
 ### PVP Stats
 - Kills
@@ -34,19 +34,34 @@ Player Stats is a plugin that tracks various player statistics and provides rank
 
 ---
 
-## 🔧 Configuration Options
+## Configuration Options
 
 ### Stats Mode (`<StatsMode>Both</StatsMode>`)
 
-| Mode | Description |
+| StatsMode | Description |
 |------|-------------|
 | `Both` | The `/stats` command displays both PVP and PVE stats, but ranking, rewards and UI are based on PVP stats |
 | `PVP` | The `/stats` command displays only PVP stats, and ranking, rewards and UI are based on PVP stats |
 | `PVE` | The `/stats` command displays only PVE stats, and ranking, rewards and UI are based on PVE stats |
 
+### Other Options
+
+The plugin offers several additional options to customize functionality:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `DatabaseProvider` | `json` | Choose between `json` or `mysql` for data storage |
+| `SaveIntervalSeconds` | `300` | Interval in seconds for saving player stats from memory to the database |
+| `ShowCombinedDeaths` | `true` | When enabled, deaths in statistics count both PVE (zombies, animals, suicides) and PVP deaths. When disabled, only deaths matching the current `StatsMode` are counted |
+| `EnableUIEffect` | `false` | Activates the optional UI for viewing statistics. Make sure to install the workshop mod to use it |
+| `ShowUIEffectByDefault` | `true` | Whether the UI should be shown by default when players join. Players can toggle it using `/statsui` command |
+| `EnableJoinLeaveMessages` | `true` | Displays messages when players join or leave the server (with their rank if they reached a minimum ranking treshold) |
+| `MinimumRankingTreshold` | `25` | Minimum number of kills required to appear on the ranking |
+| `EnableRewards` | `true` | Activates the permission-based rewards system |
+
 ---
 
-## 🖥️ Workshop Integration (Optional)
+## Workshop (Optional)
 The UI is optional and provides a visual display for PVP stats. 
 
 - **Workshop Item**: [Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593)
@@ -57,7 +72,7 @@ The UI is optional and provides a visual display for PVP stats.
 
 ---
 
-## 🔑 Commands
+## Commands
 
 | Command | Description |
 |---------|-------------|
@@ -71,7 +86,7 @@ The UI is optional and provides a visual display for PVP stats.
 
 ---
 
-## 🔐 Permissions
+## Permissions
 
 ```xml
 <Permission Cooldown="0">playtime</Permission>
@@ -85,7 +100,7 @@ The UI is optional and provides a visual display for PVP stats.
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <PlayerStatsConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -113,12 +128,12 @@ The UI is optional and provides a visual display for PVP stats.
 
 ---
 
-## 👨‍💻 Credits
+## Credits
 UI made by **💪 Soer (Unbeaten)**. He also sponsored the creation of this plugin 💸.
 
 ---
 
-## ❓ Frequently Asked Questions
+## Frequently Asked Questions
 
 1. **How do I enable the UI?**  
    Set `<EnableUIEffect>true</EnableUIEffect>` in the configuration and subscribe to the workshop item.
@@ -128,6 +143,9 @@ UI made by **💪 Soer (Unbeaten)**. He also sponsored the creation of this plug
 
 3. **How do I customize rewards?**  
    Edit the `<Rewards>` section in the configuration file with your desired thresholds and permission groups.
+
+4. **How can I create a custom UI?**  
+   You can download the `statsui.unitypackage` from the [All versions](versions) page and import it into your Unity project. Then, customize the UI as needed and reupload it to the workshop.
 
 ---
 
