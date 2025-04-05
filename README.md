@@ -48,16 +48,16 @@ Player Stats is a plugin that tracks various player statistics and provides rank
 
 The plugin offers several additional options to customize functionality:
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `DatabaseProvider` | `json` | Choose between `json` or `mysql` for data storage |
-| `SaveIntervalSeconds` | `300` | Interval in seconds for saving player stats from memory to the database |
-| `ShowCombinedDeaths` | `true` | When enabled, deaths in statistics count both PVE (zombies, animals, suicides) and PVP deaths. When disabled, only deaths matching the current `StatsMode` are counted |
-| `EnableUIEffect` | `false` | Activates the optional UI for viewing statistics. Make sure to install the workshop mod to use it |
-| `ShowUIEffectByDefault` | `true` | Whether the UI should be shown by default when players join. Players can toggle it using `/statsui` command |
-| `EnableJoinLeaveMessages` | `true` | Displays messages when players join or leave the server (with their rank if they reached a minimum ranking treshold) |
-| `MinimumRankingTreshold` | `25` | Minimum number of kills required to appear on the ranking |
-| `EnableRewards` | `true` | Activates the permission-based rewards system |
+| Option | Description |
+|--------|-------------|
+| `DatabaseProvider` | Choose between `json` or `mysql` for data storage |
+| `SaveIntervalSeconds` | Interval in seconds for saving player stats from memory to the database |
+| `ShowCombinedDeaths` | When enabled, deaths in statistics count both PVE (zombies, animals, suicides) and PVP deaths. When disabled, only deaths matching the current `StatsMode` are counted |
+| `EnableUIEffect` | Activates the optional UI for viewing statistics. Make sure to install the workshop mod to use it |
+| `ShowUIEffectByDefault` | Whether the UI should be shown by default when players join. Players can toggle it using `/statsui` command |
+| `EnableJoinLeaveMessages` | Displays messages when players join or leave the server (with their rank if they reached a minimum ranking treshold) |
+| `MinimumRankingTreshold` | Minimum number of kills required to appear on the ranking |
+| `EnableRewards` | Activates the permission-based rewards system |
 
 ---
 
