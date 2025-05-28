@@ -5,6 +5,7 @@ using Rocket.API.Serialisation;
 using Rocket.Core;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace RestoreMonarchy.PlayerStats.Components
 
         public Player Player { get; private set; }
         public string Name => Player.channel.owner.playerID.characterName;
+        public CSteamID SteamID => Player.channel.owner.playerID.steamID;
         public ulong SteamId => Player.channel.owner.playerID.steamID.m_SteamID;
         public PlayerStatsData PlayerData { get; private set; }
         public PlayerStatsData SessionPlayerData { get; private set; }
@@ -202,6 +204,8 @@ namespace RestoreMonarchy.PlayerStats.Components
                     }
                     killerComponent.UpdateUIEffect();
                     killerComponent.CheckGiveReward();
+
+                    killerComponent.CheckAutomaticBan();
                 }
                 UpdateUIEffect();
             } else
@@ -213,6 +217,8 @@ namespace RestoreMonarchy.PlayerStats.Components
                     UpdateUIEffect();
                 }
             }
+
+            CheckAutomaticBan();
         }
 
         internal void CheckGiveReward()

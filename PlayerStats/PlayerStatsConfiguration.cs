@@ -39,6 +39,35 @@ namespace RestoreMonarchy.PlayerStats
         public int MinimumRankingTreshold { get; set; }
         public bool EnableRewards { get; set; }
         public Reward[] Rewards { get; set; }
+        public bool EnableAutomaticBans { get; set; } = false;
+        public AutomaticBan[] AutomaticBans { get; set; } = 
+        [
+            new AutomaticBan
+            {
+                Reason = "Cheating (AB)",
+                Conditions =
+                [
+                    new AutomaticBanCondition
+                    {
+                        Comparer = "greater",
+                        Stat = nameof(PlayerStatsData.Kills),
+                        Value = 30
+                    },
+                    new AutomaticBanCondition
+                    {
+                        Comparer = "greater",
+                        Stat = "Accuracy",
+                        Value = 80
+                    },
+                    new AutomaticBanCondition
+                    {
+                        Comparer = "less",
+                        Stat = nameof(PlayerStatsData.Playtime),
+                        Value = 3600
+                    }
+                ]
+            },
+        ];
 
         // Only hide legacy properties when using new StatsMode
         public bool ShouldSerializeEnablePVPStats() => StatsMode == null;

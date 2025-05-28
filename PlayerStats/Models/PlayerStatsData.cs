@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Rocket.Core.Logging;
 using System;
 
 namespace RestoreMonarchy.PlayerStats.Models
@@ -36,6 +37,45 @@ namespace RestoreMonarchy.PlayerStats.Models
                 {
                     return PlayerStatsPlugin.Instance.Configuration.Instance.ActualStatsMode == StatsMode.Both || PlayerStatsPlugin.Instance.Configuration.Instance.ActualStatsMode == StatsMode.PVP ? PVPDeaths : PVEDeaths;
                 }
+            }
+        }
+
+        public long GetStatValue(string name)
+        {
+            switch (name?.ToLower())
+            {
+                case "kills":
+                    return Kills;
+                case "headshots":
+                    return Headshots;
+                case "pvpdeaths":
+                    return PVPDeaths;
+                case "pvedeaths":
+                    return PVEDeaths;
+                case "zombies":
+                    return Zombies;
+                case "megazombies":
+                    return MegaZombies;
+                case "animals":
+                    return Animals;
+                case "resources":
+                    return Resources;
+                case "harvests":
+                    return Harvests;
+                case "fish":
+                    return Fish;
+                case "structures":
+                    return Structures;
+                case "barricades":
+                    return Barricades;
+                case "playtime":
+                    return (long)Playtime; // Assuming Playtime is in seconds
+                case "accuracy":
+                    return Kills > 0 ? (long)((Headshots / (double)Kills) * 100) : 0; // Calculate accuracy as percentage of headshots to kills
+                case "deaths":
+                    return Deaths; // Returns combined deaths if configured
+                default:
+                    return 0;
             }
         }
     }

@@ -16,6 +16,15 @@ Player Stats is a plugin that tracks various player statistics and provides rank
 | 🔄 Migration | Automatic migration from Arechi PlayerStats plugin |
 | 🖥️ User Interface | Optional UI for viewing PVP/PVE stats |
 
+## Workshop (Optional)
+The UI is optional and provides a visual display for PVP stats. 
+
+- **Workshop Item**: [Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593)
+- **ID**: `3352126593`
+
+> 💡 **PRO TIP**  
+> Remember to set `<EnableUIEffect>true</EnableUIEffect>` in the configuration file to activate the UI.
+
 ## Tracked Statistics
 
 ### PVP Stats
@@ -25,12 +34,12 @@ Player Stats is a plugin that tracks various player statistics and provides rank
 - HS% (Headshot Percentage)
 
 ### PVE Stats
-- Zombies
-- Mega Zombies
-- Animals
-- Resources
-- Harvests
-- Fish
+- Zombies (zombies killed)
+- Mega Zombies (mega zombies killed)
+- Animals (animals killed)
+- Resources (resources gathered)
+- Harvests (plant harvests)
+- Fish (fish caught)
 
 ---
 
@@ -43,6 +52,45 @@ Player Stats is a plugin that tracks various player statistics and provides rank
 | `Both` | The `/stats` command displays both PVP and PVE stats, but ranking, rewards and UI are based on PVP stats |
 | `PVP` | The `/stats` command displays only PVP stats, and ranking, rewards and UI are based on PVP stats |
 | `PVE` | The `/stats` command displays only PVE stats, and ranking, rewards and UI are based on PVE stats |
+
+### Automatic Bans
+
+The Automatic Bans feature allows server owners to automatically ban players who meet suspicious statistical patterns, helping detect potential cheaters or rule violators. Bans are triggered when players die or eliminate other players, checking their overall statistics against configured thresholds.
+
+**How it works:**
+- Conditions are checked whenever a player kills someone or dies
+- Multiple conditions can be combined - ALL conditions must be met to trigger a ban
+- Supports custom ban reasons that will be displayed to the banned player
+- Uses the player's total statistics (not session stats) for evaluation
+
+**Available Statistics:**
+- `Kills` - Total player kills
+- `Deaths` - Total deaths (PVP and/or PVE based on ShowCombinedDeaths setting)
+- `PVPDeaths` - Deaths caused by other players only
+- `Headshots` - Total headshot kills
+- `Accuracy` - Headshot percentage (0-100)
+- `Playtime` - Total time played on the server (in seconds)
+
+**Supported Comparers:**
+- `greater` - Greater than the specified value
+- `less` - Less than the specified value  
+- `equal` - Equal to the specified value
+
+**Example Configuration:**
+The default configuration automatically bans players who achieve more than 30 kills with over 80% headshot accuracy within their first hour of playtime - a pattern typically indicating cheating:
+
+```xml
+<AutomaticBan Reason="Cheating (AB)">
+  <Conditions>
+    <Condition Comparer="greater" Stat="Kills" Value="30" />
+    <Condition Comparer="greater" Stat="Accuracy" Value="80" />
+    <Condition Comparer="less" Stat="Playtime" Value="3600" />
+  </Conditions>
+</AutomaticBan>
+```
+
+> ⚠️ **Warning**  
+> Use this feature carefully and test your conditions thoroughly. Consider your server's gameplay style and player skill levels when setting thresholds to avoid false positives.
 
 ### Other Options
 
@@ -60,15 +108,6 @@ The plugin offers several additional options to customize functionality:
 | `EnableRewards` | Activates the permission-based rewards system |
 
 ---
-
-## Workshop (Optional)
-The UI is optional and provides a visual display for PVP stats. 
-
-- **Workshop Item**: [Player Stats UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3352126593)
-- **ID**: `3352126593`
-
-> 💡 **PRO TIP**  
-> Remember to set `<EnableUIEffect>true</EnableUIEffect>` in the configuration file to activate the UI.
 
 ---
 
@@ -123,6 +162,16 @@ The UI is optional and provides a visual display for PVP stats.
     <Reward Name="VIP Rank" Treshold="50" PermissionGroup="vip" />
     <Reward Name="MVP Rank" Treshold="125" PermissionGroup="mvp" />
   </Rewards>
+  <EnableAutomaticBans>false</EnableAutomaticBans>
+  <AutomaticBans>
+    <AutomaticBan Reason="Cheating (AB)">
+      <Conditions>
+        <Condition Comparer="greater" Stat="Kills" Value="30" />
+        <Condition Comparer="greater" Stat="Accuracy" Value="80" />
+        <Condition Comparer="less" Stat="Playtime" Value="3600" />
+      </Conditions>
+    </AutomaticBan>
+  </AutomaticBans>
 </PlayerStatsConfiguration>
 ```
 
@@ -145,7 +194,7 @@ UI made by **💪 Soer (Unbeaten)**. He also sponsored the creation of this plug
    Edit the `<Rewards>` section in the configuration file with your desired thresholds and permission groups.
 
 4. **How can I create a custom UI?**  
-   You can download the `statsui.unitypackage` from the [All versions](versions) page and import it into your Unity project. Then, customize the UI as needed and reupload it to the workshop.
+   You can download the `statsui.unitypackage` from the **All versions** page and import it into your Unity project. Then, customize the UI as needed and reupload it to the workshop. Remember in Unity do not rename any of the objects in the hierarchy, as the plugin uses the object names to find them. When reuploading, make sure to use a unique GUID and ID.
 
 ---
 
